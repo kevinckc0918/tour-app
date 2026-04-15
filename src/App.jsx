@@ -295,7 +295,8 @@ export default function App() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
-                    <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至 2026年4月22日 (星期三)</p>
+                    <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至</p>
+                    <p className="text-slate-800 font-medium">2026年4月22日 (星期三)</p>
                   </div>
                 </div>
                 
