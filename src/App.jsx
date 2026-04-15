@@ -294,9 +294,9 @@ export default function App() {
                     <Calendar className="w-6 h-6 text-indigo-600" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
-                    <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至</p>
-                    <p className="text-slate-800 font-medium">2026年4月22日 (星期三)</p>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1 ">旅行日期</h3>
+                    <p className="text-slate-800 font-medium text-left">2026年4月17日 (星期五) 至</p>
+                    <p className="text-slate-800 font-medium text-left">2026年4月22日 (星期三)</p>
                   </div>
                 </div>
                 
@@ -309,8 +309,8 @@ export default function App() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">集合地點</h3>
-                    <p className="text-slate-800 font-medium">早上 07:50</p>
-                    <p className="text-slate-600">福田口岸11號門集合</p>
+                    <p className="text-slate-800 font-medium text-left">早上 07:50</p>
+                    <p className="text-slate-600 text-left">福田口岸11號門集合</p>
                   </div>
                 </div>
 
@@ -326,13 +326,13 @@ export default function App() {
                     <div className="space-y-2">
                       <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
                         <span className="text-xs font-bold text-amber-800 block mb-0.5">國內全陪</span>
-                        <span className="text-slate-800 font-medium">張文銓</span> 
-                        <span className="text-slate-600 text-sm ml-2">186 8231 6932</span>
+                        <span className="text-slate-800 font-medium text-left">張文銓</span> 
+                        <span className="text-slate-600 text-sm ml-2 text-left">186 8231 6932</span>
                       </div>
                       <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
                         <span className="text-xs font-bold text-amber-800 block mb-0.5">當地全陪</span>
-                        <span className="text-slate-800 font-medium">李曉琴</span> 
-                        <span className="text-slate-600 text-sm ml-2">136 4768 0360</span>
+                        <span className="text-slate-800 font-medium text-left">李曉琴</span> 
+                        <span className="text-slate-600 text-sm ml-2 text-left">136 4768 0360</span>
                       </div>
                     </div>
                   </div>
