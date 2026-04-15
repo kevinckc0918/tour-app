@@ -215,7 +215,7 @@ export default function App() {
               <span>魔幻重慶 高鐵6天團 (旗號：K536)</span>
             </h1>
             <p className="mt-1 text-indigo-200 text-xs md:text-sm">
-              KL-CXSS06 | 桃花源、武隆天生三橋、洪崖洞
+              KL-CXSS06-20260417A | 桃花源、武隆天生三橋、洪崖洞
             </p>            
           </div>
         </div>
