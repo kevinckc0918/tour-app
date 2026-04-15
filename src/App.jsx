@@ -19,7 +19,8 @@ import {
   Minus,
   Utensils,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Info
 } from 'lucide-react';
 
 const itineraryData = [
@@ -88,7 +89,7 @@ const dynamicCategories = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('itinerary'); // 'itinerary' | 'calculator' | 'poster'
+  const [activeTab, setActiveTab] = useState('overview'); // 新增並預設為 'overview'
   const [expandedDay, setExpandedDay] = useState(1);
   const [currency, setCurrency] = useState('HKD');
   const [travelers, setTravelers] = useState(2);
@@ -198,7 +199,6 @@ export default function App() {
     }
   };
 
-  // 處理圖片載入失敗
   const handleImageError = (e) => {
     e.target.style.display = 'none';
     e.target.nextElementSibling.style.display = 'flex';
@@ -206,71 +206,67 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12">
-      {/* Header */}
+      {/* Header (已精簡) */}
       <header className="bg-indigo-700 text-white shadow-lg sticky top-0 z-20">
-        <div className="max-w-3xl mx-auto px-4 py-4 md:py-6">
+        <div className="max-w-3xl mx-auto px-4 py-4 md:py-5">
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
-              <MapPin className="h-6 w-6 text-white" />
-              魔幻重慶 高鐵6天團 (旗號：K536 號旗幟)
+              <MapPin className="h-6 w-6 text-white shrink-0" />
+              <span>魔幻重慶 高鐵6天團 (旗號：K536)</span>
             </h1>
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              日期 : 2026年4月17日 (星期五) 至 2026年4月22日 (星期三)
+            <p className="mt-1 text-indigo-200 text-xs md:text-sm">
+              KL-CXSS06 | 桃花源、武隆天生三橋、洪崖洞
             </p>            
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              集合地點：早上07:50 福田口岸11號門集合
-            </p>
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              國內全陪：張文銓 18682316932 / 當地全陪：李曉琴 13647680360
-            </p>           
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              出發 1： 深圳北-廣州南 G2244 0925/1001
-            </p>  
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              出發 2： 廣州南-從江 D1860 1057/1428
-            </p>    
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              回程：福田或羅湖口岸 G2965 1530/2205
-            </p>  
-                              
           </div>
         </div>
         
-        {/* Tab Navigation */}
-        <div className="flex border-t border-indigo-600/50 bg-indigo-800/50">
-          {/* 1. 每日行程 */}
+        {/* Tab Navigation (新增 總覽 Tab) */}
+        <div className="flex border-t border-indigo-600/50 bg-indigo-800/50 overflow-x-auto custom-scrollbar">
+          {/* 1. 總覽 */}
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
+              activeTab === 'overview' ? 'text-white' : 'text-indigo-200 hover:text-white hover:bg-indigo-700/50'
+            }`}
+          >
+            <Info size={18} />
+            <span>總覽</span>
+            {activeTab === 'overview' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
+          </button>
+
+          {/* 2. 每日行程 */}
           <button
             onClick={() => setActiveTab('itinerary')}
-            className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-base font-bold transition-colors relative ${
+            className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
               activeTab === 'itinerary' ? 'text-white' : 'text-indigo-200 hover:text-white hover:bg-indigo-700/50'
             }`}
           >
             <Calendar size={18} />
-            <span>每日行程</span>
+            <span>行程</span>
             {activeTab === 'itinerary' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
           
-          {/* 2. 旅費計算 */}
+          {/* 3. 旅費計算 */}
           <button
             onClick={() => setActiveTab('calculator')}
-            className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-base font-bold transition-colors relative ${
+            className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
               activeTab === 'calculator' ? 'text-white' : 'text-indigo-200 hover:text-white hover:bg-indigo-700/50'
             }`}
           >
             <Calculator size={18} />
-            <span>旅費計算</span>
+            <span>計算</span>
             {activeTab === 'calculator' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
 
-          {/* 3. 原版海報 */}
+          {/* 4. 原版海報 */}
           <button
             onClick={() => setActiveTab('poster')}
-            className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-base font-bold transition-colors relative ${
+            className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
               activeTab === 'poster' ? 'text-white' : 'text-indigo-200 hover:text-white hover:bg-indigo-700/50'
             }`}
           >
             <FileText size={18} />
-            <span>原版海報</span>
+            <span>海報</span>
             {activeTab === 'poster' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
         </div>
@@ -278,6 +274,122 @@ export default function App() {
 
       <main className="max-w-3xl mx-auto px-4 py-6 md:py-8">
         
+        {/* Tab 0: Overview (New) */}
+        {activeTab === 'overview' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-indigo-50 border-b border-indigo-100 p-5 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold flex items-center gap-2 text-indigo-900">
+                  <Info className="text-indigo-600" size={24} />
+                  基本資訊總覽
+                </h2>
+              </div>
+              
+              <div className="p-5 md:p-6 space-y-6">
+                
+                {/* 1. 日期 */}
+                <div className="flex gap-4">
+                  <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0">
+                    <Calendar className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
+                    <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至 2026年4月22日 (星期三)</p>
+                  </div>
+                </div>
+                
+                <hr className="border-slate-100" />
+
+                {/* 2. 集合地點 */}
+                <div className="flex gap-4">
+                  <div className="bg-emerald-100/50 p-3 rounded-xl h-fit shrink-0">
+                    <MapPin className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">集合地點</h3>
+                    <p className="text-slate-800 font-medium">早上 07:50</p>
+                    <p className="text-slate-600">福田口岸11號門集合</p>
+                  </div>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                {/* 3. 導遊資訊 */}
+                <div className="flex gap-4">
+                  <div className="bg-amber-100/50 p-3 rounded-xl h-fit shrink-0">
+                    <Users className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">聯絡人 / 導遊</h3>
+                    <div className="space-y-2">
+                      <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
+                        <span className="text-xs font-bold text-amber-800 block mb-0.5">國內全陪</span>
+                        <span className="text-slate-800 font-medium">張文銓</span> 
+                        <span className="text-slate-600 text-sm ml-2">186 8231 6932</span>
+                      </div>
+                      <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
+                        <span className="text-xs font-bold text-amber-800 block mb-0.5">當地全陪</span>
+                        <span className="text-slate-800 font-medium">李曉琴</span> 
+                        <span className="text-slate-600 text-sm ml-2">136 4768 0360</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                {/* 4. 交通資訊 */}
+                <div className="flex gap-4">
+                  <div className="bg-blue-100/50 p-3 rounded-xl h-fit shrink-0">
+                    <Train className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="w-full">
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">交通安排 (高鐵)</h3>
+                    
+                    <div className="space-y-3">
+                      {/* 去程 */}
+                      <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">去程</span>
+                        </div>
+                        <ul className="space-y-2 relative before:absolute before:inset-y-3 before:left-2 before:w-0.5 before:bg-slate-200 ml-1">
+                          <li className="relative pl-6">
+                            <span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-50"></span>
+                            <div className="text-slate-800 font-medium">深圳北 <span className="text-slate-400 mx-1">→</span> 廣州南</div>
+                            <div className="text-sm text-slate-500">車次：G2244 (09:25 - 10:01)</div>
+                          </li>
+                          <li className="relative pl-6">
+                            <span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-50"></span>
+                            <div className="text-slate-800 font-medium">廣州南 <span className="text-slate-400 mx-1">→</span> 從江</div>
+                            <div className="text-sm text-slate-500">車次：D1860 (10:57 - 14:28)</div>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* 回程 */}
+                      <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程</span>
+                        </div>
+                        <ul className="space-y-2 relative before:absolute before:inset-y-3 before:left-2 before:w-0.5 before:bg-slate-200 ml-1">
+                          <li className="relative pl-6">
+                            <span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-slate-500 ring-4 ring-slate-50"></span>
+                            <div className="text-slate-800 font-medium">福田 或 羅湖口岸</div>
+                            <div className="text-sm text-slate-500">車次：G2965 (15:30 - 22:05)</div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            
+          </div>
+        )}
+
         {/* Tab 1: Itinerary */}
         {activeTab === 'itinerary' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -514,7 +626,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Tab 3: Poster (Moved to last) */}
+        {/* Tab 3: Poster */}
         {activeTab === 'poster' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 text-center">
