@@ -221,26 +221,18 @@ export default function App() {
               集合地點：早上07:50 福田口岸11號門集合
             </p>
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              國內全陪：張文銓 18682316932
-            </p>
+              國內全陪：張文銓 18682316932 / 當地全陪：李曉琴 13647680360
+            </p>           
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              當地全陪：李曉琴 13647680360
-            </p>            
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              出發：
+              出發 1： 深圳北-廣州南 G2244 0925/1001
             </p>  
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              深圳北-廣州南 G2244 0925/1001
-            </p> 
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              廣州南-從江 D1860 1057/1428
+              出發 2： 廣州南-從江 D1860 1057/1428
             </p>    
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              回程：
+              回程：福田或羅湖口岸 G2965 1530/2205
             </p>  
-            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              福田或羅湖口岸 G2965 1530/2205
-            </p>                                  
+                              
           </div>
         </div>
         
