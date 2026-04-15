@@ -30,7 +30,7 @@ const itineraryData = [
     details: '於福田口岸集合，乘搭地鐵到深圳北站轉乘高鐵前往從江/貴陽站（車程約4.5小時）。抵達後遊覽中國四大古城之一的【鎮遠古城】，欣賞石板小街、祝聖橋、舞陽河風光及古城夜景。',
     icon: Train,
     meals: '早餐：自理 | 午餐：自理 | 晚餐：苗家風味',
-    hotel: '鎮遠準4星 四季酒店/古城客棧/同級'
+    hotel: '鎮遠準4星四季來酒店'
   },
   {
     day: 2,
@@ -39,7 +39,7 @@ const itineraryData = [
     details: '前往酉陽區，遊覽國家5A級景區【桃花源風景區】（包門票），欣賞充滿古樸田園風光的各個景點，包括古桃源、桃花源森林公園等。之後參觀集土家吊腳樓群落及水運碼頭於一身的千年【濯水古鎮】（包門票）。',
     icon: Landmark,
     meals: '早餐：酒店 | 午餐：酉陽土雞風味 | 晚餐：土家老臘肉風味',
-    hotel: '濯水準4星 誠悅莊客棧/同級'
+    hotel: '濯水準4星伍棧記客棧'
   },
   {
     day: 3,
@@ -48,7 +48,7 @@ const itineraryData = [
     details: '遊覽中國最大的苗族建築群落【蚩尤九黎城】（包門票），參觀九黎神柱及最高最大的吊腳樓建築體九黎宮等。其後前往張藝謀電影《黃金甲》唯一外景地【武隆天生三橋】（包門票及換乘車），觀賞天龍橋、青龍橋、黑龍橋等自然奇觀。',
     icon: Camera,
     meals: '早餐：酒店 | 午餐：農家豆花風味 | 晚餐：武隆竹籠風味',
-    hotel: '武隆準4星 戴斯酒店/依雲度假酒店/同級'
+    hotel: '武隆準4星大衛營大酒店'
   },
   {
     day: 4,
@@ -57,7 +57,7 @@ const itineraryData = [
     details: '參觀中國工業遺產【涪陵816核工廠景區】（包門票），探索世界第一大人工洞體。下午前往重慶主城區，遊覽解放碑商業中心、朝天門廣場、洪崖洞民俗區及千撕門大橋。晚上可自選參與自費項目：重慶地道老火鍋 / 8D魔幻山城深度夜遊。',
     icon: MapPin,
     meals: '早餐：酒店 | 午餐：酸菜魚風味 | 晚餐：重慶老火鍋 (自費套票)',
-    hotel: '重慶準5星 奧蘭國際酒店/華美達酒店/同級'
+    hotel: '重慶準5星帕格森蒂大酒店'
   },
   {
     day: 5,
@@ -66,7 +66,7 @@ const itineraryData = [
     details: '暢遊【磁器口古鎮】（包門票）、彈子石老街及山城巷，體驗地道重慶風情。團友可根據喜好選購自費套餐：網紅皇冠大扶梯、長江索道，或登上雲端之眼俯瞰重慶全景及兩江四岸風景。',
     icon: Camera,
     meals: '早餐：酒店 | 午餐：磁器口小吃街自理 | 晚餐：江湖菜風味',
-    hotel: '重慶準5星 奧蘭國際酒店/華美達酒店/同級'
+    hotel: '重慶準5星帕格森蒂大酒店'
   },
   {
     day: 6,
@@ -212,17 +212,35 @@ export default function App() {
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
               <MapPin className="h-6 w-6 text-white" />
-              魔幻重慶 高鐵6天團 (旗號：K536 號旗)
+              魔幻重慶 高鐵6天團 (旗號：K536 號旗幟)
             </h1>
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
               日期 : 2026年4月17日 (星期五) 至 2026年4月22日 (星期三)
             </p>            
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              集合地點：早上07:50 福田口岸11號門外集合
+              集合地點：早上07:50 福田口岸11號門集合
             </p>
             <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
-              國內全陪：張文銓18682316932
+              國內全陪：張文銓 18682316932
             </p>
+            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
+              當地全陪：李曉琴 13647680360
+            </p>            
+            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
+              出發：
+            </p>  
+            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
+              深圳北-廣州南 G2244 0925/1001
+            </p> 
+            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
+              廣州南-從江 D1860 1057/1428
+            </p>    
+            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
+              回程：
+            </p>  
+            <p className="mt-1 text-white opacity-90 text-xs md:text-sm text-left">
+              福田或羅湖口岸 G2965 1530/2205
+            </p>                                  
           </div>
         </div>
         
