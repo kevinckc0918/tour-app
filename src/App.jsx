@@ -254,7 +254,7 @@ export default function App() {
             }`}
           >
             <Calculator size={18} />
-            <span>計算</span>
+            <span>旅費</span>
             {activeTab === 'calculator' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
 
