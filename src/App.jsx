@@ -225,14 +225,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12">
+    // 加入了 style={{ colorScheme: 'light' }} 以防止 Android 強制深色模式反轉顏色
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12" style={{ colorScheme: 'light' }}>
       {/* Header */}
       <header className="bg-indigo-700 text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 md:py-5">
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
               <MapPin className="h-6 w-6 text-white shrink-0" />
-              <span>魔幻重慶 高鐵6天花生團 (旗號：K536)</span>
+              <span>魔幻重慶 高鐵6天團 (旗號：K536)</span>
             </h1>
             <p className="mt-1 text-indigo-200 text-xs md:text-sm">
               KL-CXSS06 | 桃花源、武隆天生三橋、洪崖洞
@@ -264,7 +265,6 @@ export default function App() {
             {activeTab === 'itinerary' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
           
-          {/* 修改了這裡的 Tab 名稱為「旅費」 */}
           <button
             onClick={() => setActiveTab('calculator')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -479,7 +479,8 @@ export default function App() {
                 <select 
                   value={currency} 
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="text-sm border-slate-300 rounded-md bg-slate-50 text-slate-700 focus:ring-emerald-500 focus:border-emerald-500 py-1.5"
+                  // 強制加上 bg-white text-slate-900 防止被手機自動深色化
+                  className="text-sm bg-white text-slate-900 border border-slate-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 py-1.5 px-2"
                 >
                   <option value="HKD">HKD ($)</option>
                   <option value="RMB">RMB (¥)</option>
@@ -499,7 +500,7 @@ export default function App() {
                   >
                     <Minus size={16} />
                   </button>
-                  <span className="font-bold text-lg w-8 text-center text-slate-800">{travelers}</span>
+                  <span className="font-bold text-lg w-8 text-center text-slate-900">{travelers}</span>
                   <button 
                     onClick={() => adjustTravelers(1)}
                     className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-md transition-colors"
@@ -555,31 +556,33 @@ export default function App() {
                         {dynamicExpenses[cat.id].map((entry, index) => (
                           <div key={entry.id} className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-slate-400 font-medium w-3 text-center">{index + 1}.</span>
+                              <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
                               
                               <div className="flex flex-1 gap-2">
+                                {/* 加入了 bg-white text-slate-900 border 來固定字體及背景顏色 */}
                                 <input
                                   type="text"
                                   placeholder="名稱"
                                   value={entry.desc}
                                   onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)}
-                                  className="w-1/2 rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2.5"
+                                  className="w-1/2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2.5"
                                 />
                                 <div className="relative w-1/2">
-                                  <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-400 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
+                                  <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
+                                  {/* 加入了 bg-white text-slate-900 border 來固定字體及背景顏色 */}
                                   <input
                                     type="text"
                                     placeholder="總額"
                                     value={entry.amount}
                                     onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)}
-                                    className="w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-2"
+                                    className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-2"
                                   />
                                 </div>
                               </div>
 
                               <button 
                                 onClick={() => handleRemoveDynamic(cat.id, entry.id)}
-                                className="text-red-400 hover:text-red-600 p-1 shrink-0"
+                                className="text-red-500 hover:text-red-700 p-1 shrink-0"
                                 title="刪除"
                               >
                                 <Trash2 size={16} />
@@ -588,7 +591,7 @@ export default function App() {
                             
                             {cat.isShared && entry.amount && !isNaN(parseFloat(entry.amount)) && (
                               <div className="text-xs text-orange-600 font-medium text-right pr-8 flex items-center justify-end gap-1">
-                                平攤: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
+                                平攤每人: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
                               </div>
                             )}
                           </div>
@@ -616,7 +619,7 @@ export default function App() {
 
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-400 text-center py-2 italic border border-dashed border-slate-200 rounded-md bg-white/50 mt-2">
+                      <p className="text-xs text-slate-500 text-center py-2 italic border border-dashed border-slate-300 rounded-md bg-white mt-2">
                         尚未新增任何項目
                       </p>
                     )}
@@ -726,17 +729,18 @@ function FixedExpenseInput({ label, name, value, onChange, icon, currency, helpe
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <span className="text-slate-500 sm:text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
         </div>
+        {/* 加入了 bg-white text-slate-900 border 來固定字體及背景顏色 */}
         <input
           type="text"
           name={name}
           id={name}
           value={value}
           onChange={onChange}
-          className="block w-full rounded-md border-slate-300 pl-8 pr-12 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2 bg-white border transition-colors font-medium"
+          className="block w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md pl-8 pr-12 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2 transition-colors font-medium"
           placeholder="0.00"
         />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <span className="text-slate-400 sm:text-sm font-medium">{currency}</span>
+          <span className="text-slate-500 sm:text-sm font-medium">{currency}</span>
         </div>
       </div>
       {helperText && <p className="text-xs text-slate-500 mt-1 ml-1">{helperText}</p>}
