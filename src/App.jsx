@@ -20,7 +20,11 @@ import {
   Utensils,
   FileText,
   Image as ImageIcon,
-  Info
+  Info,
+  Share2,
+  Copy,
+  Send,
+  X
 } from 'lucide-react';
 
 const itineraryData = [
@@ -92,9 +96,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('overview'); 
   const [expandedDay, setExpandedDay] = useState(1);
   
-  const [currency, setCurrency] = useState(() => {
-    return localStorage.getItem('cqTourCurrency') || 'HKD';
-  });
+  const [currency, setCurrency] = useState(() => localStorage.getItem('cqTourCurrency') || 'HKD');
   
   const [travelers, setTravelers] = useState(() => {
     const saved = localStorage.getItem('cqTourTravelers');
@@ -103,25 +105,21 @@ export default function App() {
   
   const [fixedExpenses, setFixedExpenses] = useState(() => {
     const saved = localStorage.getItem('cqTourFixedExpenses');
-    return saved ? JSON.parse(saved) : {
-      tourFee: '3199',
-      serviceFee: '600',
-      insurance: '230',
-    };
+    return saved ? JSON.parse(saved) : { tourFee: '3199', serviceFee: '600', insurance: '230' };
   });
 
   const [dynamicExpenses, setDynamicExpenses] = useState(() => {
     const saved = localStorage.getItem('cqTourDynamicExpenses');
     return saved ? JSON.parse(saved) : {
-      optionalTours: [
-        { id: 'default-opt-1', desc: '火鍋加景點門票', amount: '598' }
-      ],
-      food: [],
-      shopping: [],
-      transport: [],
-      others: []
+      optionalTours: [{ id: 'default-opt-1', desc: '火鍋加景點門票', amount: '618' }],
+      food: [], shopping: [], transport: [], others: []
     };
   });
+
+  // Share Modal States
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareTarget, setShareTarget] = useState('all');
+  const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
     localStorage.setItem('cqTourCurrency', currency);
@@ -129,6 +127,11 @@ export default function App() {
     localStorage.setItem('cqTourFixedExpenses', JSON.stringify(fixedExpenses));
     localStorage.setItem('cqTourDynamicExpenses', JSON.stringify(dynamicExpenses));
   }, [currency, travelers, fixedExpenses, dynamicExpenses]);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 3000);
+  };
 
   const handleFixedChange = (e) => {
     const { name, value } = e.target;
@@ -140,38 +143,22 @@ export default function App() {
   const handleAddDynamic = (category) => {
     const catDef = dynamicCategories.find(c => c.id === category);
     const newItem = { id: Date.now(), desc: '', amount: '' };
-    // 如果這個分類需要記錄日期，預設設定為第1天
-    if (catDef?.hasDate) {
-      newItem.day = '1';
-    }
-    setDynamicExpenses(prev => ({
-      ...prev,
-      [category]: [...prev[category], newItem]
-    }));
+    if (catDef?.hasDate) newItem.day = '1';
+    setDynamicExpenses(prev => ({ ...prev, [category]: [...prev[category], newItem] }));
   };
 
   const handleUpdateDynamic = (category, id, field, value) => {
-    if (field === 'amount' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
-      return; 
-    }
+    if (field === 'amount' && value !== '' && !/^\d*\.?\d*$/.test(value)) return; 
     setDynamicExpenses(prev => ({
-      ...prev,
-      [category]: prev[category].map(item => 
-        item.id === id ? { ...item, [field]: value } : item
-      )
+      ...prev, [category]: prev[category].map(item => item.id === id ? { ...item, [field]: value } : item)
     }));
   };
 
   const handleRemoveDynamic = (category, id) => {
-    setDynamicExpenses(prev => ({
-      ...prev,
-      [category]: prev[category].filter(item => item.id !== id)
-    }));
+    setDynamicExpenses(prev => ({ ...prev, [category]: prev[category].filter(item => item.id !== id) }));
   };
 
-  const adjustTravelers = (amount) => {
-    setTravelers(prev => Math.max(1, prev + amount));
-  };
+  const adjustTravelers = (amount) => setTravelers(prev => Math.max(1, prev + amount));
 
   const calculateTotals = () => {
     let perPersonFixed = 0;
@@ -185,11 +172,7 @@ export default function App() {
       arr.forEach(item => {
         const num = parseFloat(item.amount);
         if (!isNaN(num)) {
-          if (category === 'food') {
-            perPersonDynamic += (num / travelers);
-          } else {
-            perPersonDynamic += num;
-          }
+          perPersonDynamic += category === 'food' ? (num / travelers) : num;
         }
       });
     });
@@ -197,31 +180,105 @@ export default function App() {
     const totalPerPerson = perPersonFixed + perPersonDynamic;
     const totalGroup = totalPerPerson * travelers;
 
-    return {
-      perPerson: totalPerPerson.toFixed(2),
-      group: totalGroup.toFixed(2)
-    };
+    return { perPerson: totalPerPerson.toFixed(2), group: totalGroup.toFixed(2) };
   };
 
   const totals = calculateTotals();
 
   const clearForm = () => {
     if (window.confirm("確定要重置數據並回復到預設值嗎？")) {
-      setFixedExpenses({
-        tourFee: '3199',
-        serviceFee: '600',
-        insurance: '230',
-      });
+      setFixedExpenses({ tourFee: '3199', serviceFee: '600', insurance: '230' });
       setDynamicExpenses({
-        optionalTours: [
-          { id: Date.now().toString(), desc: '火鍋加景點門票', amount: '598' }
-        ],
-        food: [],
-        shopping: [],
-        transport: [],
-        others: []
+        optionalTours: [{ id: Date.now().toString(), desc: '火鍋加景點門票', amount: '598' }],
+        food: [], shopping: [], transport: [], others: []
       });
       setTravelers(2);
+    }
+  };
+
+  // --- 產生分享文字邏輯 ---
+  const generateShareText = () => {
+    const foodItems = dynamicExpenses.food.filter(item => parseFloat(item.amount) > 0);
+    if (foodItems.length === 0) return "尚未有餐飲開支紀錄。";
+
+    const symbol = currency === 'HKD' ? '$' : '¥';
+    let text = `🥢 魔幻重慶 高鐵6天團\n`;
+    text += `👥 同行人數：${travelers}人\n`;
+    text += `===================\n`;
+
+    let grandTotal = 0;
+
+    if (shareTarget === 'all') {
+      const grouped = {};
+      foodItems.forEach(item => {
+        const d = item.day || '1';
+        if (!grouped[d]) grouped[d] = [];
+        grouped[d].push(item);
+      });
+      const sortedDays = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
+      
+      sortedDays.forEach(day => {
+        text += `\n📍 第 ${day} 天\n`;
+        let dayTotal = 0;
+        grouped[day].forEach(item => {
+           text += ` • ${item.desc || '未命名項目'}: ${symbol}${item.amount}\n`;
+           dayTotal += parseFloat(item.amount);
+        });
+        text += ` 🔸 每日小計: ${symbol}${dayTotal.toFixed(2)}\n`;
+        text += ` 🙋‍♂️ 每人平攤: ${symbol}${(dayTotal/travelers).toFixed(2)}\n`;
+        text += `-------------------\n`;
+        grandTotal += dayTotal;
+      });
+
+      text += `\n💰 餐飲總開支: ${symbol}${grandTotal.toFixed(2)}\n`;
+      text += `🎯 每人總平攤: ${symbol}${(grandTotal/travelers).toFixed(2)}\n`;
+    } else {
+      const dayItems = foodItems.filter(item => (item.day || '1') === shareTarget);
+      text += `\n📍 第 ${shareTarget} 天餐飲明細\n`;
+      dayItems.forEach(item => {
+         text += ` • ${item.desc || '未命名項目'}: ${symbol}${item.amount}\n`;
+         grandTotal += parseFloat(item.amount);
+      });
+      text += `===================\n`;
+      text += `💰 每日小計: ${symbol}${grandTotal.toFixed(2)}\n`;
+      text += `🎯 每人平攤: ${symbol}${(grandTotal/travelers).toFixed(2)}\n`;
+    }
+
+    return text;
+  };
+
+  // --- 複製到剪貼簿 (Fallback) ---
+  const copyToClipboard = () => {
+    const text = generateShareText();
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast('✅ 已複製文字！請到 WhatsApp 貼上');
+    } catch (err) {
+      showToast('❌ 複製失敗，請手動選取複製');
+    }
+    document.body.removeChild(textArea);
+    setIsShareModalOpen(false);
+  };
+
+  // --- 喚起系統原生分享 (WhatsApp/Signal) ---
+  const shareToApp = () => {
+    const text = generateShareText();
+    if (navigator.share) {
+      navigator.share({
+        title: '重慶團餐飲開支分享',
+        text: text
+      }).catch(err => console.log('Share canceled', err));
+      setIsShareModalOpen(false);
+    } else {
+      showToast('⚠️ 您的瀏覽器不支援直接發送，請點擊「複製文字」');
     }
   };
 
@@ -230,15 +287,29 @@ export default function App() {
     e.target.nextElementSibling.style.display = 'flex';
   };
 
+  // 取得有餐飲紀錄的日期供分享選擇
+  const getAvailableFoodDays = () => {
+    const days = new Set(dynamicExpenses.food.filter(i => parseFloat(i.amount) > 0).map(i => i.day || '1'));
+    return Array.from(days).sort((a,b) => parseInt(a) - parseInt(b));
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12" style={{ colorScheme: 'light' }}>
+      
+      {/* Toast Notification */}
+      {toastMsg && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-5 py-3 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.2)] z-[100] animate-in fade-in slide-in-from-top-5 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+          {toastMsg}
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-indigo-700 text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 md:py-5">
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
               <MapPin className="h-6 w-6 text-white shrink-0" />
-              <span>魔幻重慶 高鐵6天花生團 (旗號：K536)</span>
+              <span>魔幻重慶 高鐵6天團 (旗號：K536)</span>
             </h1>
             <p className="mt-1 text-indigo-200 text-xs md:text-sm">
               KL-CXSS06 | 桃花源、武隆天生三橋、洪崖洞
@@ -258,7 +329,6 @@ export default function App() {
             <span>總覽</span>
             {activeTab === 'overview' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
-
           <button
             onClick={() => setActiveTab('itinerary')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -269,7 +339,6 @@ export default function App() {
             <span>行程</span>
             {activeTab === 'itinerary' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
-          
           <button
             onClick={() => setActiveTab('calculator')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -280,7 +349,6 @@ export default function App() {
             <span>旅費</span>
             {activeTab === 'calculator' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
-
           <button
             onClick={() => setActiveTab('poster')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -308,9 +376,7 @@ export default function App() {
               </div>
               <div className="p-5 md:p-6 space-y-6">
                 <div className="flex gap-4">
-                  <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0">
-                    <Calendar className="w-6 h-6 text-indigo-600" />
-                  </div>
+                  <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0"><Calendar className="w-6 h-6 text-indigo-600" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
                     <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至 2026年4月22日 (星期三)</p>
@@ -318,9 +384,7 @@ export default function App() {
                 </div>
                 <hr className="border-slate-100" />
                 <div className="flex gap-4">
-                  <div className="bg-emerald-100/50 p-3 rounded-xl h-fit shrink-0">
-                    <MapPin className="w-6 h-6 text-emerald-600" />
-                  </div>
+                  <div className="bg-emerald-100/50 p-3 rounded-xl h-fit shrink-0"><MapPin className="w-6 h-6 text-emerald-600" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">集合地點</h3>
                     <p className="text-slate-800 font-medium">早上 07:50</p>
@@ -329,57 +393,44 @@ export default function App() {
                 </div>
                 <hr className="border-slate-100" />
                 <div className="flex gap-4">
-                  <div className="bg-amber-100/50 p-3 rounded-xl h-fit shrink-0">
-                    <Users className="w-6 h-6 text-amber-600" />
-                  </div>
+                  <div className="bg-amber-100/50 p-3 rounded-xl h-fit shrink-0"><Users className="w-6 h-6 text-amber-600" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">聯絡人 / 導遊</h3>
                     <div className="space-y-2">
                       <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
                         <span className="text-xs font-bold text-amber-800 block mb-0.5">國內全陪</span>
-                        <span className="text-slate-800 font-medium">張文銓</span> 
-                        <span className="text-slate-600 text-sm ml-2">186 8231 6932</span>
+                        <span className="text-slate-800 font-medium">張文銓</span> <span className="text-slate-600 text-sm ml-2">186 8231 6932</span>
                       </div>
                       <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
                         <span className="text-xs font-bold text-amber-800 block mb-0.5">當地全陪</span>
-                        <span className="text-slate-800 font-medium">李曉琴</span> 
-                        <span className="text-slate-600 text-sm ml-2">136 4768 0360</span>
+                        <span className="text-slate-800 font-medium">李曉琴</span> <span className="text-slate-600 text-sm ml-2">136 4768 0360</span>
                       </div>
                     </div>
                   </div>
                 </div>
                 <hr className="border-slate-100" />
                 <div className="flex gap-4">
-                  <div className="bg-blue-100/50 p-3 rounded-xl h-fit shrink-0">
-                    <Train className="w-6 h-6 text-blue-600" />
-                  </div>
+                  <div className="bg-blue-100/50 p-3 rounded-xl h-fit shrink-0"><Train className="w-6 h-6 text-blue-600" /></div>
                   <div className="w-full">
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">交通安排 (高鐵)</h3>
                     <div className="space-y-3">
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">去程</span>
-                        </div>
+                        <div className="flex items-center gap-2 mb-2"><span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">去程</span></div>
                         <ul className="space-y-2 relative before:absolute before:inset-y-3 before:left-2 before:w-0.5 before:bg-slate-200 ml-1">
-                          <li className="relative pl-6">
-                            <span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-50"></span>
+                          <li className="relative pl-6"><span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-50"></span>
                             <div className="text-slate-800 font-medium">深圳北 <span className="text-slate-400 mx-1">→</span> 廣州南</div>
                             <div className="text-sm text-slate-500">車次：G2244 (09:25 - 10:01)</div>
                           </li>
-                          <li className="relative pl-6">
-                            <span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-50"></span>
+                          <li className="relative pl-6"><span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-50"></span>
                             <div className="text-slate-800 font-medium">廣州南 <span className="text-slate-400 mx-1">→</span> 從江</div>
                             <div className="text-sm text-slate-500">車次：D1860 (10:57 - 14:28)</div>
                           </li>
                         </ul>
                       </div>
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程</span>
-                        </div>
+                        <div className="flex items-center gap-2 mb-2"><span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程</span></div>
                         <ul className="space-y-2 relative before:absolute before:inset-y-3 before:left-2 before:w-0.5 before:bg-slate-200 ml-1">
-                          <li className="relative pl-6">
-                            <span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-slate-500 ring-4 ring-slate-50"></span>
+                          <li className="relative pl-6"><span className="absolute left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-slate-500 ring-4 ring-slate-50"></span>
                             <div className="text-slate-800 font-medium">福田 或 羅湖口岸</div>
                             <div className="text-sm text-slate-500">車次：G2965 (15:30 - 22:05)</div>
                           </li>
@@ -400,46 +451,29 @@ export default function App() {
               {itineraryData.map((day) => {
                 const isExpanded = expandedDay === day.day;
                 const Icon = day.icon;
-                
                 return (
                   <div key={day.day} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-200">
-                    <button 
-                      onClick={() => setExpandedDay(isExpanded ? null : day.day)}
-                      className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors text-left"
-                    >
+                    <button onClick={() => setExpandedDay(isExpanded ? null : day.day)} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors text-left">
                       <div className="flex items-center gap-4">
-                        <div className="bg-indigo-100 text-indigo-700 w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">
-                          D{day.day}
-                        </div>
+                        <div className="bg-indigo-100 text-indigo-700 w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">D{day.day}</div>
                         <div>
                           <h3 className="font-bold text-lg text-slate-800">{day.title}</h3>
-                          <p className="text-sm text-slate-500 mt-1 line-clamp-1">
-                            {day.highlights.join(' • ')}
-                          </p>
+                          <p className="text-sm text-slate-500 mt-1 line-clamp-1">{day.highlights.join(' • ')}</p>
                         </div>
                       </div>
                       {isExpanded ? <ChevronUp className="text-slate-400 shrink-0" /> : <ChevronDown className="text-slate-400 shrink-0" />}
                     </button>
-                    
                     {isExpanded && (
                       <div className="px-5 pb-5 pt-2 border-t border-slate-100 bg-slate-50/50">
-                        <p className="text-slate-600 leading-relaxed text-sm md:text-base mb-5">
-                          {day.details}
-                        </p>
+                        <p className="text-slate-600 leading-relaxed text-sm md:text-base mb-5">{day.details}</p>
                         <div className="flex flex-col gap-2.5">
                           <div className="flex items-start gap-2 text-sm text-orange-800 bg-orange-50 p-3 rounded-lg border border-orange-100/50">
                             <Utensils className="w-5 h-5 shrink-0 mt-0.5 text-orange-600" />
-                            <div>
-                              <span className="font-bold block mb-1 text-orange-900">餐飲安排：</span>
-                              {day.meals}
-                            </div>
+                            <div><span className="font-bold block mb-1 text-orange-900">餐飲安排：</span>{day.meals}</div>
                           </div>
                           <div className="flex items-start gap-2 text-sm text-indigo-800 bg-indigo-50 p-3 rounded-lg border border-indigo-100/50">
                             <Icon className="w-5 h-5 shrink-0 mt-0.5 text-indigo-600" />
-                            <div>
-                              <span className="font-bold block mb-1 text-indigo-900">住宿安排：</span>
-                              {day.hotel}
-                            </div>
+                            <div><span className="font-bold block mb-1 text-indigo-900">住宿安排：</span>{day.hotel}</div>
                           </div>
                         </div>
                       </div>
@@ -478,40 +512,18 @@ export default function App() {
                   <Users size={18} /> 同行人數
                 </div>
                 <div className="flex items-center gap-1 bg-white rounded-lg border border-indigo-200 p-1 shadow-sm">
-                  <button 
-                    onClick={() => adjustTravelers(-1)}
-                    className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-md transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-                    disabled={travelers <= 1}
-                  >
-                    <Minus size={16} />
-                  </button>
+                  <button onClick={() => adjustTravelers(-1)} className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-md transition-colors disabled:opacity-30 disabled:hover:bg-transparent" disabled={travelers <= 1}><Minus size={16} /></button>
                   <span className="font-bold text-lg w-8 text-center text-slate-900">{travelers}</span>
-                  <button 
-                    onClick={() => adjustTravelers(1)}
-                    className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-md transition-colors"
-                  >
-                    <Plus size={16} />
-                  </button>
+                  <button onClick={() => adjustTravelers(1)} className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-md transition-colors"><Plus size={16} /></button>
                 </div>
               </div>
 
               {/* Fixed Expenses Section */}
               <div className="space-y-4 mb-6">
                 <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider border-b pb-1">基本固定開支 (每人)</h3>
-                <FixedExpenseInput 
-                  label="基本團費" name="tourFee" value={fixedExpenses.tourFee} 
-                  onChange={handleFixedChange} icon={<Briefcase size={18} />} currency={currency}
-                />
-                <FixedExpenseInput 
-                  label="旅行團服務費 (導遊小費)" name="serviceFee" value={fixedExpenses.serviceFee} 
-                  onChange={handleFixedChange} icon={<DollarSign size={18} />} currency={currency}
-                  helperText="海報註明每人每天$100，6天共$600"
-                />
-                <FixedExpenseInput 
-                  label="旅遊綜合保險" name="insurance" value={fixedExpenses.insurance} 
-                  onChange={handleFixedChange} icon={<Briefcase size={18} />} currency={currency}
-                  helperText="海報提及指定保險為$230"
-                />
+                <FixedExpenseInput label="基本團費" name="tourFee" value={fixedExpenses.tourFee} onChange={handleFixedChange} icon={<Briefcase size={18} />} currency={currency} />
+                <FixedExpenseInput label="旅行團服務費 (導遊小費)" name="serviceFee" value={fixedExpenses.serviceFee} onChange={handleFixedChange} icon={<DollarSign size={18} />} currency={currency} helperText="海報註明每人每天$100，6天共$600" />
+                <FixedExpenseInput label="旅遊綜合保險" name="insurance" value={fixedExpenses.insurance} onChange={handleFixedChange} icon={<Briefcase size={18} />} currency={currency} helperText="海報提及指定保險為$230" />
               </div>
 
               {/* Dynamic Expenses Section */}
@@ -528,28 +540,38 @@ export default function App() {
                         </label>
                         {cat.helper && <p className={`text-xs mt-0.5 ${cat.isShared ? 'text-orange-600/80' : 'text-slate-500'}`}>{cat.helper}</p>}
                       </div>
-                      <button 
-                        onClick={() => handleAddDynamic(cat.id)}
-                        className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded-md transition-colors font-medium ${cat.isShared ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'}`}
-                      >
-                        <Plus size={14} /> 新增
-                      </button>
+                      
+                      {/* 分享按鈕與新增按鈕 */}
+                      <div className="flex items-center gap-2">
+                        {cat.id === 'food' && dynamicExpenses.food.filter(i => parseFloat(i.amount) > 0).length > 0 && (
+                          <button 
+                            onClick={() => setIsShareModalOpen(true)}
+                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-md transition-colors font-bold bg-green-100 text-green-700 hover:bg-green-200 border border-green-200"
+                          >
+                            <Share2 size={14} /> 分享
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => handleAddDynamic(cat.id)}
+                          className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-md transition-colors font-bold border ${cat.isShared ? 'bg-orange-100 text-orange-700 hover:bg-orange-200 border-orange-200' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border-indigo-200'}`}
+                        >
+                          <Plus size={14} /> 新增
+                        </button>
+                      </div>
                     </div>
 
-                    {/* 有項目的情況下進行渲染 */}
+                    {/* 項目渲染邏輯 */}
                     {dynamicExpenses[cat.id].length > 0 ? (
                       <div className="mt-3">
                         {/* 如果此分類設定為 hasDate (需按日期分組) */}
                         {cat.hasDate ? (
                           (() => {
-                            // 1. 先將項目按日期分組
                             const grouped = {};
                             dynamicExpenses[cat.id].forEach(item => {
                               const d = item.day || '1';
                               if (!grouped[d]) grouped[d] = [];
                               grouped[d].push(item);
                             });
-                            // 2. 將日期排序 (1, 2, 3...)
                             const sortedDays = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
 
                             return (
@@ -558,79 +580,38 @@ export default function App() {
                                   const dayItems = grouped[dayStr];
                                   const dayNum = parseInt(dayStr);
                                   const dayData = itineraryData.find(d => d.day === dayNum);
-                                  // 從標題抓取日期文字，例如 "17/4(五)"
                                   const dateMatch = dayData?.title.match(/(\d{1,2}\/\d{1,2}\([一二三四五六日]\))/);
                                   const dateLabel = dateMatch ? dateMatch[0] : '';
-                                  // 計算該日小計
                                   const dailySubtotal = dayItems.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
                                   return (
                                     <div key={dayStr} className="bg-white border border-orange-200 rounded-xl overflow-hidden shadow-sm">
-                                      {/* 日期群組標題 */}
                                       <div className="bg-orange-100/50 px-3 py-2 border-b border-orange-100 flex justify-between items-center">
                                         <div className="font-bold text-orange-900 text-sm flex items-center gap-1.5">
-                                          <Calendar size={14} className="text-orange-600" />
-                                          第{dayStr}天 {dateLabel}
+                                          <Calendar size={14} className="text-orange-600" /> 第{dayStr}天 {dateLabel}
                                         </div>
                                       </div>
-                                      
-                                      {/* 日期內的項目列表 */}
                                       <div className="p-3 space-y-3">
                                         {dayItems.map((entry) => (
                                           <div key={entry.id} className="flex items-center gap-2">
-                                            {/* 精簡版的日期切換器 */}
-                                            <select
-                                              value={entry.day || '1'}
-                                              onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)}
-                                              className="bg-orange-50 text-orange-800 border border-orange-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500 text-xs py-1.5 px-1 font-medium"
-                                            >
-                                              {itineraryData.map(d => (
-                                                <option key={d.day} value={d.day}>D{d.day}</option>
-                                              ))}
+                                            <select value={entry.day || '1'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)} className="bg-orange-50 text-orange-800 border border-orange-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500 text-xs py-1.5 px-1 font-medium">
+                                              {itineraryData.map(d => <option key={d.day} value={d.day}>D{d.day}</option>)}
                                             </select>
-                                            
                                             <div className="flex flex-1 gap-2">
-                                              <input
-                                                type="text"
-                                                placeholder="名稱"
-                                                value={entry.desc}
-                                                onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)}
-                                                className="w-[55%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2"
-                                              />
+                                              <input type="text" placeholder="名稱" value={entry.desc} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)} className="w-[55%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2" />
                                               <div className="relative w-[45%]">
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
-                                                <input
-                                                  type="text"
-                                                  placeholder="總額"
-                                                  value={entry.amount}
-                                                  onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)}
-                                                  className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-1"
-                                                />
+                                                <input type="text" placeholder="總額" value={entry.amount} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)} className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-1" />
                                               </div>
                                             </div>
-
-                                            <button 
-                                              onClick={() => handleRemoveDynamic(cat.id, entry.id)}
-                                              className="text-red-400 hover:text-red-600 p-1 shrink-0"
-                                              title="刪除"
-                                            >
-                                              <Trash2 size={16} />
-                                            </button>
+                                            <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-400 hover:text-red-600 p-1 shrink-0" title="刪除"><Trash2 size={16} /></button>
                                           </div>
                                         ))}
                                       </div>
-
-                                      {/* 該日小計底部 */}
                                       {dailySubtotal > 0 && (
                                         <div className="bg-orange-50/30 px-3 py-2.5 border-t border-orange-100 flex flex-col items-end">
-                                          <div className="text-sm font-bold text-orange-800">
-                                            每日小計: {currency === 'HKD' ? '$' : '¥'} {dailySubtotal.toFixed(2)}
-                                          </div>
-                                          {cat.isShared && (
-                                            <div className="text-[10px] font-medium text-orange-600 mt-0.5">
-                                              平攤每人: {currency === 'HKD' ? '$' : '¥'} {(dailySubtotal / travelers).toFixed(2)}
-                                            </div>
-                                          )}
+                                          <div className="text-sm font-bold text-orange-800">每日小計: {currency === 'HKD' ? '$' : '¥'} {dailySubtotal.toFixed(2)}</div>
+                                          {cat.isShared && <div className="text-[10px] font-medium text-orange-600 mt-0.5">平攤每人: {currency === 'HKD' ? '$' : '¥'} {(dailySubtotal / travelers).toFixed(2)}</div>}
                                         </div>
                                       )}
                                     </div>
@@ -640,43 +621,22 @@ export default function App() {
                             );
                           })()
                         ) : (
-                          /* 如果不需要按日期分組 (標準列表) */
                           <div className="space-y-3">
                             {dynamicExpenses[cat.id].map((entry, index) => (
                               <div key={entry.id} className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
                                   <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
                                   <div className="flex flex-1 gap-2">
-                                    <input
-                                      type="text"
-                                      placeholder="名稱"
-                                      value={entry.desc}
-                                      onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)}
-                                      className="w-1/2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2.5"
-                                    />
+                                    <input type="text" placeholder="名稱" value={entry.desc} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)} className="w-1/2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2.5" />
                                     <div className="relative w-1/2">
                                       <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
-                                      <input
-                                        type="text"
-                                        placeholder="總額"
-                                        value={entry.amount}
-                                        onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)}
-                                        className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-2"
-                                      />
+                                      <input type="text" placeholder="總額" value={entry.amount} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)} className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-2" />
                                     </div>
                                   </div>
-                                  <button 
-                                    onClick={() => handleRemoveDynamic(cat.id, entry.id)}
-                                    className="text-red-400 hover:text-red-600 p-1 shrink-0"
-                                    title="刪除"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                  <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-400 hover:text-red-600 p-1 shrink-0" title="刪除"><Trash2 size={16} /></button>
                                 </div>
                                 {cat.isShared && entry.amount && !isNaN(parseFloat(entry.amount)) && (
-                                  <div className="text-xs text-orange-600 font-medium text-right pr-8 flex items-center justify-end gap-1">
-                                    平攤每人: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
-                                  </div>
+                                  <div className="text-xs text-orange-600 font-medium text-right pr-8 flex items-center justify-end gap-1">平攤每人: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}</div>
                                 )}
                               </div>
                             ))}
@@ -759,31 +719,16 @@ export default function App() {
               </h2>
 
               <div className="space-y-6 mt-6">
-                {/* 圖片 1 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img 
-                    src="/poster1.jpg" 
-                    alt="重慶高鐵團海報 第1頁" 
-                    className="w-full h-auto block"
-                    onError={handleImageError}
-                  />
-                  {/* Fallback 佔位符 */}
+                  <img src="/poster1.jpg" alt="重慶高鐵團海報 第1頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第一頁圖片</p>
                     <p className="text-xs text-slate-400">請確保 public/poster1.jpg 檔案存在</p>
                   </div>
                 </div>
-
-                {/* 圖片 2 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img 
-                    src="/poster2.jpg" 
-                    alt="重慶高鐵團海報 第2頁" 
-                    className="w-full h-auto block"
-                    onError={handleImageError}
-                  />
-                  {/* Fallback 佔位符 */}
+                  <img src="/poster2.jpg" alt="重慶高鐵團海報 第2頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第二頁圖片</p>
@@ -796,6 +741,66 @@ export default function App() {
         )}
 
       </main>
+
+      {/* Share Modal */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
+            
+            <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white p-4 flex justify-between items-center">
+              <h3 className="font-bold flex items-center gap-2 text-lg">
+                <Share2 size={20} />
+                分享餐飲開支
+              </h3>
+              <button 
+                onClick={() => setIsShareModalOpen(false)}
+                className="bg-white/20 hover:bg-white/30 p-1.5 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-5 flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">選擇分享內容：</label>
+                <select 
+                  value={shareTarget} 
+                  onChange={(e) => setShareTarget(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-lg py-2 px-3 focus:ring-green-500 focus:border-green-500 font-medium"
+                >
+                  <option value="all">📝 總結所有餐飲紀錄</option>
+                  {getAvailableFoodDays().map(d => (
+                    <option key={d} value={d}>📍 只分享 第 {d} 天明細</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">分享預覽：</label>
+                <pre className="bg-slate-100/80 p-4 rounded-xl text-xs text-slate-700 whitespace-pre-wrap font-mono border border-slate-200 max-h-64 overflow-y-auto custom-scrollbar">
+                  {generateShareText()}
+                </pre>
+              </div>
+              
+              <div className="flex gap-3 pt-2 mt-auto">
+                <button 
+                  onClick={copyToClipboard}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl transition-colors border border-slate-300"
+                >
+                  <Copy size={18} /> 複製文字
+                </button>
+                <button 
+                  onClick={shareToApp}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-xl transition-colors shadow-sm shadow-green-500/30"
+                >
+                  <Send size={18} /> 發送至 App
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
