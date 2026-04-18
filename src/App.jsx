@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MapPin, 
   Calendar, 
@@ -89,26 +89,46 @@ const dynamicCategories = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('overview'); // 新增並預設為 'overview'
+  const [activeTab, setActiveTab] = useState('overview'); 
   const [expandedDay, setExpandedDay] = useState(1);
-  const [currency, setCurrency] = useState('HKD');
-  const [travelers, setTravelers] = useState(2);
   
-  const [fixedExpenses, setFixedExpenses] = useState({
-    tourFee: '3199',
-    serviceFee: '600',
-    insurance: '230',
+  const [currency, setCurrency] = useState(() => {
+    return localStorage.getItem('cqTourCurrency') || 'HKD';
+  });
+  
+  const [travelers, setTravelers] = useState(() => {
+    const saved = localStorage.getItem('cqTourTravelers');
+    return saved !== null ? parseInt(saved, 10) : 2;
+  });
+  
+  const [fixedExpenses, setFixedExpenses] = useState(() => {
+    const saved = localStorage.getItem('cqTourFixedExpenses');
+    return saved ? JSON.parse(saved) : {
+      tourFee: '3199',
+      serviceFee: '600',
+      insurance: '230',
+    };
   });
 
-  const [dynamicExpenses, setDynamicExpenses] = useState({
-    optionalTours: [
-      { id: 'default-opt-1', desc: '火鍋加景點門票', amount: '598' }
-    ],
-    food: [],
-    shopping: [],
-    transport: [],
-    others: []
+  const [dynamicExpenses, setDynamicExpenses] = useState(() => {
+    const saved = localStorage.getItem('cqTourDynamicExpenses');
+    return saved ? JSON.parse(saved) : {
+      optionalTours: [
+        { id: 'default-opt-1', desc: '火鍋加景點門票', amount: '598' }
+      ],
+      food: [],
+      shopping: [],
+      transport: [],
+      others: []
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('cqTourCurrency', currency);
+    localStorage.setItem('cqTourTravelers', travelers.toString());
+    localStorage.setItem('cqTourFixedExpenses', JSON.stringify(fixedExpenses));
+    localStorage.setItem('cqTourDynamicExpenses', JSON.stringify(dynamicExpenses));
+  }, [currency, travelers, fixedExpenses, dynamicExpenses]);
 
   const handleFixedChange = (e) => {
     const { name, value } = e.target;
@@ -206,23 +226,22 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12">
-      {/* Header (已精簡) */}
+      {/* Header */}
       <header className="bg-indigo-700 text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 md:py-5">
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
               <MapPin className="h-6 w-6 text-white shrink-0" />
-              <span>魔幻重慶 高鐵6天團 (旗號：K536)</span>
+              <span>魔幻重慶 高鐵6天花生團 (旗號：K536)</span>
             </h1>
             <p className="mt-1 text-indigo-200 text-xs md:text-sm">
-              KL-CXSS06-20260417A | 桃花源、武隆天生三橋、洪崖洞
+              KL-CXSS06 | 桃花源、武隆天生三橋、洪崖洞
             </p>            
           </div>
         </div>
         
-        {/* Tab Navigation (新增 總覽 Tab) */}
+        {/* Tab Navigation */}
         <div className="flex border-t border-indigo-600/50 bg-indigo-800/50 overflow-x-auto custom-scrollbar">
-          {/* 1. 總覽 */}
           <button
             onClick={() => setActiveTab('overview')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -234,7 +253,6 @@ export default function App() {
             {activeTab === 'overview' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
 
-          {/* 2. 每日行程 */}
           <button
             onClick={() => setActiveTab('itinerary')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -246,7 +264,7 @@ export default function App() {
             {activeTab === 'itinerary' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
           
-          {/* 3. 旅費計算 */}
+          {/* 修改了這裡的 Tab 名稱為「旅費」 */}
           <button
             onClick={() => setActiveTab('calculator')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -258,7 +276,6 @@ export default function App() {
             {activeTab === 'calculator' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
 
-          {/* 4. 原版海報 */}
           <button
             onClick={() => setActiveTab('poster')}
             className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${
@@ -274,10 +291,9 @@ export default function App() {
 
       <main className="max-w-3xl mx-auto px-4 py-6 md:py-8">
         
-        {/* Tab 0: Overview (New) */}
+        {/* Tab 0: Overview */}
         {activeTab === 'overview' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
               <div className="bg-indigo-50 border-b border-indigo-100 p-5 md:p-6">
                 <h2 className="text-lg md:text-xl font-bold flex items-center gap-2 text-indigo-900">
@@ -287,16 +303,14 @@ export default function App() {
               </div>
               
               <div className="p-5 md:p-6 space-y-6">
-                
                 {/* 1. 日期 */}
                 <div className="flex gap-4">
                   <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0">
                     <Calendar className="w-6 h-6 text-indigo-600" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1 ">旅行日期</h3>
-                    <p className="text-slate-800 font-medium text-left">2026年4月17日 (星期五) 至</p>
-                    <p className="text-slate-800 font-medium text-left">2026年4月22日 (星期三)</p>
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
+                    <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至 2026年4月22日 (星期三)</p>
                   </div>
                 </div>
                 
@@ -309,8 +323,8 @@ export default function App() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">集合地點</h3>
-                    <p className="text-slate-800 font-medium text-left">早上 07:50</p>
-                    <p className="text-slate-600 text-left">福田口岸11號門集合</p>
+                    <p className="text-slate-800 font-medium">早上 07:50</p>
+                    <p className="text-slate-600">福田口岸11號門集合</p>
                   </div>
                 </div>
 
@@ -326,13 +340,13 @@ export default function App() {
                     <div className="space-y-2">
                       <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
                         <span className="text-xs font-bold text-amber-800 block mb-0.5">國內全陪</span>
-                        <span className="text-slate-800 font-medium text-left">張文銓</span> 
-                        <span className="text-slate-600 text-sm ml-2 text-left">186 8231 6932</span>
+                        <span className="text-slate-800 font-medium">張文銓</span> 
+                        <span className="text-slate-600 text-sm ml-2">186 8231 6932</span>
                       </div>
                       <div className="bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
                         <span className="text-xs font-bold text-amber-800 block mb-0.5">當地全陪</span>
-                        <span className="text-slate-800 font-medium text-left">李曉琴</span> 
-                        <span className="text-slate-600 text-sm ml-2 text-left">136 4768 0360</span>
+                        <span className="text-slate-800 font-medium">李曉琴</span> 
+                        <span className="text-slate-600 text-sm ml-2">136 4768 0360</span>
                       </div>
                     </div>
                   </div>
@@ -384,10 +398,8 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
-            
           </div>
         )}
 
@@ -462,6 +474,7 @@ export default function App() {
                 <h2 className="text-lg font-bold flex items-center gap-2 text-slate-700">
                   <Calculator className="text-emerald-600" size={20} />
                   開支明細
+                  <span className="ml-2 text-xs font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">已自動儲存</span>
                 </h2>
                 <select 
                   value={currency} 
@@ -575,11 +588,32 @@ export default function App() {
                             
                             {cat.isShared && entry.amount && !isNaN(parseFloat(entry.amount)) && (
                               <div className="text-xs text-orange-600 font-medium text-right pr-8 flex items-center justify-end gap-1">
-                                平攤每人: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
+                                平攤: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
                               </div>
                             )}
                           </div>
                         ))}
+
+                        {/* 加入小計 (Subtotal) 區塊 */}
+                        {(() => {
+                          const subtotal = dynamicExpenses[cat.id].reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                          if (subtotal > 0) {
+                            return (
+                              <div className={`mt-4 pt-3 border-t ${cat.isShared ? 'border-orange-200/60' : 'border-slate-200'} flex flex-col items-end`}>
+                                <div className={`text-sm font-bold ${cat.isShared ? 'text-orange-900' : 'text-slate-700'}`}>
+                                  {cat.label.split(' ')[0]} 小計: {currency === 'HKD' ? '$' : '¥'} {subtotal.toFixed(2)}
+                                </div>
+                                {cat.isShared && (
+                                  <div className="text-xs font-medium text-orange-700 mt-0.5">
+                                    (總平攤每人: {currency === 'HKD' ? '$' : '¥'} {(subtotal / travelers).toFixed(2)})
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
+
                       </div>
                     ) : (
                       <p className="text-xs text-slate-400 text-center py-2 italic border border-dashed border-slate-200 rounded-md bg-white/50 mt-2">
@@ -595,7 +629,7 @@ export default function App() {
                   onClick={clearForm}
                   className="text-sm text-slate-500 hover:text-red-600 transition-colors flex items-center gap-1 font-medium bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-red-50"
                 >
-                  <Trash2 size={14} /> 重置所有數據
+                  <Trash2 size={14} /> 重置並清空儲存紀錄
                 </button>
               </div>
 
@@ -636,7 +670,7 @@ export default function App() {
                 原版行程海報
               </h2>
 
-              <div className="space-y-6">
+              <div className="space-y-6 mt-6">
                 {/* 圖片 1 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
                   <img 
