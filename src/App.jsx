@@ -82,7 +82,7 @@ const itineraryData = [
 
 const dynamicCategories = [
   { id: 'optionalTours', label: '自費項目 (每人)', icon: <Camera size={18} />, helper: '請輸入每人費用 (如：老火鍋¥158 / 夜遊¥198)' },
-  { id: 'food', label: '餐飲開支 (全單總數)', icon: <Coffee size={18} />, helper: '請輸入帳單總數，系統會自動按人數平攤', isShared: true, hasDate: true }, // 新增 hasDate: true
+  { id: 'food', label: '餐飲開支 (全單總數)', icon: <Coffee size={18} />, helper: '請輸入帳單總數，系統會自動按人數平攤', isShared: true, hasDate: true },
   { id: 'shopping', label: '購物及手信 (每人)', icon: <ShoppingCart size={18} />, helper: '請輸入個人花費' },
   { id: 'transport', label: '當地交通 (每人)', icon: <Car size={18} /> },
   { id: 'others', label: '其他雜費 (每人)', icon: <DollarSign size={18} /> },
@@ -140,8 +140,9 @@ export default function App() {
   const handleAddDynamic = (category) => {
     const catDef = dynamicCategories.find(c => c.id === category);
     const newItem = { id: Date.now(), desc: '', amount: '' };
+    // 如果這個分類需要記錄日期，預設設定為第1天
     if (catDef?.hasDate) {
-      newItem.day = '1'; // 預設為第1天
+      newItem.day = '1';
     }
     setDynamicExpenses(prev => ({
       ...prev,
@@ -305,7 +306,6 @@ export default function App() {
                   基本資訊總覽
                 </h2>
               </div>
-              
               <div className="p-5 md:p-6 space-y-6">
                 <div className="flex gap-4">
                   <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0">
@@ -316,9 +316,7 @@ export default function App() {
                     <p className="text-slate-800 font-medium">2026年4月17日 (星期五) 至 2026年4月22日 (星期三)</p>
                   </div>
                 </div>
-                
                 <hr className="border-slate-100" />
-
                 <div className="flex gap-4">
                   <div className="bg-emerald-100/50 p-3 rounded-xl h-fit shrink-0">
                     <MapPin className="w-6 h-6 text-emerald-600" />
@@ -329,9 +327,7 @@ export default function App() {
                     <p className="text-slate-600">福田口岸11號門集合</p>
                   </div>
                 </div>
-
                 <hr className="border-slate-100" />
-
                 <div className="flex gap-4">
                   <div className="bg-amber-100/50 p-3 rounded-xl h-fit shrink-0">
                     <Users className="w-6 h-6 text-amber-600" />
@@ -352,9 +348,7 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
                 <hr className="border-slate-100" />
-
                 <div className="flex gap-4">
                   <div className="bg-blue-100/50 p-3 rounded-xl h-fit shrink-0">
                     <Train className="w-6 h-6 text-blue-600" />
@@ -379,7 +373,6 @@ export default function App() {
                           </li>
                         </ul>
                       </div>
-
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程</span>
@@ -433,7 +426,6 @@ export default function App() {
                         <p className="text-slate-600 leading-relaxed text-sm md:text-base mb-5">
                           {day.details}
                         </p>
-                        
                         <div className="flex flex-col gap-2.5">
                           <div className="flex items-start gap-2 text-sm text-orange-800 bg-orange-50 p-3 rounded-lg border border-orange-100/50">
                             <Utensils className="w-5 h-5 shrink-0 mt-0.5 text-orange-600" />
@@ -442,7 +434,6 @@ export default function App() {
                               {day.meals}
                             </div>
                           </div>
-
                           <div className="flex items-start gap-2 text-sm text-indigo-800 bg-indigo-50 p-3 rounded-lg border border-indigo-100/50">
                             <Icon className="w-5 h-5 shrink-0 mt-0.5 text-indigo-600" />
                             <div>
@@ -545,140 +536,172 @@ export default function App() {
                       </button>
                     </div>
 
+                    {/* 有項目的情況下進行渲染 */}
                     {dynamicExpenses[cat.id].length > 0 ? (
-                      <div className="space-y-3 mt-3">
-                        {dynamicExpenses[cat.id].map((entry, index) => (
-                          <div key={entry.id} className={`flex flex-col gap-1.5 ${cat.hasDate ? 'border-b border-orange-200/40 pb-3 last:border-0 last:pb-0' : ''}`}>
-                            
-                            {/* 餐飲專屬的日期選擇列 */}
-                            {cat.hasDate && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
-                                <select
-                                  value={entry.day || '1'}
-                                  onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)}
-                                  className="flex-1 bg-white text-slate-900 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-xs py-1.5 px-2"
-                                >
-                                  {itineraryData.map(d => {
-                                    // 從標題擷取日期，如 "17/4(五)"
-                                    const dateMatch = d.title.match(/(\d{1,2}\/\d{1,2}\([一二三四五六日]\))/);
-                                    const dateStr = dateMatch ? ` ${dateMatch[0]}` : '';
-                                    return <option key={d.day} value={d.day}>第{d.day}天{dateStr}</option>
-                                  })}
-                                </select>
-                                <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-500 hover:text-red-700 p-1 shrink-0" title="刪除">
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            )}
-
-                            {/* 項目與金額輸入列 */}
-                            <div className="flex items-center gap-2">
-                              {!cat.hasDate && <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>}
-                              
-                              <div className="flex flex-1 gap-2">
-                                <input
-                                  type="text"
-                                  placeholder="名稱"
-                                  value={entry.desc}
-                                  onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)}
-                                  className="w-1/2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2.5"
-                                />
-                                <div className="relative w-1/2">
-                                  <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
-                                  <input
-                                    type="text"
-                                    placeholder="總額"
-                                    value={entry.amount}
-                                    onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)}
-                                    className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-2"
-                                  />
-                                </div>
-                              </div>
-
-                              {!cat.hasDate && (
-                                <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-500 hover:text-red-700 p-1 shrink-0" title="刪除">
-                                  <Trash2 size={16} />
-                                </button>
-                              )}
-                            </div>
-                            
-                            {cat.isShared && entry.amount && !isNaN(parseFloat(entry.amount)) && (
-                              <div className="text-xs text-orange-600 font-medium text-right pr-8 flex items-center justify-end gap-1">
-                                平攤每人: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-
-                        {/* 小計 (Subtotal) 及每日明細區塊 */}
-                        {(() => {
-                          const validItems = dynamicExpenses[cat.id].filter(item => parseFloat(item.amount) > 0);
-                          if (validItems.length === 0) return null;
-
-                          const totalSum = validItems.reduce((sum, item) => sum + parseFloat(item.amount), 0);
-
-                          let dailyBreakdown = null;
-                          if (cat.hasDate) {
-                            const byDay = {};
-                            validItems.forEach(item => {
-                              const day = item.day || '1';
-                              byDay[day] = (byDay[day] || 0) + parseFloat(item.amount);
+                      <div className="mt-3">
+                        {/* 如果此分類設定為 hasDate (需按日期分組) */}
+                        {cat.hasDate ? (
+                          (() => {
+                            // 1. 先將項目按日期分組
+                            const grouped = {};
+                            dynamicExpenses[cat.id].forEach(item => {
+                              const d = item.day || '1';
+                              if (!grouped[d]) grouped[d] = [];
+                              grouped[d].push(item);
                             });
+                            // 2. 將日期排序 (1, 2, 3...)
+                            const sortedDays = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
 
-                            // 將日子按順序排列
-                            const sortedDays = Object.keys(byDay).sort((a,b) => parseInt(a) - parseInt(b));
+                            return (
+                              <div className="space-y-4">
+                                {sortedDays.map(dayStr => {
+                                  const dayItems = grouped[dayStr];
+                                  const dayNum = parseInt(dayStr);
+                                  const dayData = itineraryData.find(d => d.day === dayNum);
+                                  // 從標題抓取日期文字，例如 "17/4(五)"
+                                  const dateMatch = dayData?.title.match(/(\d{1,2}\/\d{1,2}\([一二三四五六日]\))/);
+                                  const dateLabel = dateMatch ? dateMatch[0] : '';
+                                  // 計算該日小計
+                                  const dailySubtotal = dayItems.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
-                            if (sortedDays.length > 0) {
-                              dailyBreakdown = (
-                                <div className="w-full mb-3 space-y-2 bg-orange-100/30 p-3 rounded-lg border border-orange-200/50">
-                                  <div className="text-xs font-bold text-orange-800 flex items-center gap-1">
-                                    <Calendar size={14}/> 每日開支小計
-                                  </div>
-                                  {sortedDays.map(dayStr => {
-                                    const dayNum = parseInt(dayStr);
-                                    const dayData = itineraryData.find(d => d.day === dayNum);
-                                    const dateMatch = dayData?.title.match(/(\d{1,2}\/\d{1,2}\([一二三四五六日]\))/);
-                                    const dateLabel = dateMatch ? dateMatch[0] : '';
-                                    const dayTotal = byDay[dayStr];
-                                    const perPerson = (dayTotal / travelers).toFixed(2);
+                                  return (
+                                    <div key={dayStr} className="bg-white border border-orange-200 rounded-xl overflow-hidden shadow-sm">
+                                      {/* 日期群組標題 */}
+                                      <div className="bg-orange-100/50 px-3 py-2 border-b border-orange-100 flex justify-between items-center">
+                                        <div className="font-bold text-orange-900 text-sm flex items-center gap-1.5">
+                                          <Calendar size={14} className="text-orange-600" />
+                                          第{dayStr}天 {dateLabel}
+                                        </div>
+                                      </div>
+                                      
+                                      {/* 日期內的項目列表 */}
+                                      <div className="p-3 space-y-3">
+                                        {dayItems.map((entry) => (
+                                          <div key={entry.id} className="flex items-center gap-2">
+                                            {/* 精簡版的日期切換器 */}
+                                            <select
+                                              value={entry.day || '1'}
+                                              onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)}
+                                              className="bg-orange-50 text-orange-800 border border-orange-200 rounded-md focus:ring-emerald-500 focus:border-emerald-500 text-xs py-1.5 px-1 font-medium"
+                                            >
+                                              {itineraryData.map(d => (
+                                                <option key={d.day} value={d.day}>D{d.day}</option>
+                                              ))}
+                                            </select>
+                                            
+                                            <div className="flex flex-1 gap-2">
+                                              <input
+                                                type="text"
+                                                placeholder="名稱"
+                                                value={entry.desc}
+                                                onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)}
+                                                className="w-[55%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2"
+                                              />
+                                              <div className="relative w-[45%]">
+                                                <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
+                                                <input
+                                                  type="text"
+                                                  placeholder="總額"
+                                                  value={entry.amount}
+                                                  onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)}
+                                                  className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-1"
+                                                />
+                                              </div>
+                                            </div>
 
-                                    return (
-                                      <div key={dayStr} className="flex justify-between items-center border-b border-orange-200/30 pb-1.5 last:border-0 last:pb-0">
-                                        <span className="text-xs text-slate-600 font-medium">第{dayStr}天 {dateLabel}</span>
-                                        <div className="text-right">
+                                            <button 
+                                              onClick={() => handleRemoveDynamic(cat.id, entry.id)}
+                                              className="text-red-400 hover:text-red-600 p-1 shrink-0"
+                                              title="刪除"
+                                            >
+                                              <Trash2 size={16} />
+                                            </button>
+                                          </div>
+                                        ))}
+                                      </div>
+
+                                      {/* 該日小計底部 */}
+                                      {dailySubtotal > 0 && (
+                                        <div className="bg-orange-50/30 px-3 py-2.5 border-t border-orange-100 flex flex-col items-end">
                                           <div className="text-sm font-bold text-orange-800">
-                                            {currency === 'HKD' ? '$' : '¥'} {dayTotal.toFixed(2)}
+                                            每日小計: {currency === 'HKD' ? '$' : '¥'} {dailySubtotal.toFixed(2)}
                                           </div>
                                           {cat.isShared && (
-                                            <div className="text-[10px] text-orange-600">
-                                              平攤每人: {currency === 'HKD' ? '$' : '¥'} {perPerson}
+                                            <div className="text-[10px] font-medium text-orange-600 mt-0.5">
+                                              平攤每人: {currency === 'HKD' ? '$' : '¥'} {(dailySubtotal / travelers).toFixed(2)}
                                             </div>
                                           )}
                                         </div>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              );
-                            }
-                          }
-
-                          return (
-                            <div className={`mt-4 pt-3 border-t ${cat.isShared ? 'border-orange-200/60' : 'border-slate-200'} flex flex-col items-end`}>
-                              {dailyBreakdown}
-                              <div className={`text-sm font-bold ${cat.isShared ? 'text-orange-900' : 'text-slate-700'}`}>
-                                {cat.label.split(' ')[0]} 總計: {currency === 'HKD' ? '$' : '¥'} {totalSum.toFixed(2)}
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
-                              {cat.isShared && (
-                                <div className="text-xs font-medium text-orange-700 mt-0.5">
-                                  (總平攤每人: {currency === 'HKD' ? '$' : '¥'} {(totalSum / travelers).toFixed(2)})
+                            );
+                          })()
+                        ) : (
+                          /* 如果不需要按日期分組 (標準列表) */
+                          <div className="space-y-3">
+                            {dynamicExpenses[cat.id].map((entry, index) => (
+                              <div key={entry.id} className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
+                                  <div className="flex flex-1 gap-2">
+                                    <input
+                                      type="text"
+                                      placeholder="名稱"
+                                      value={entry.desc}
+                                      onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)}
+                                      className="w-1/2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 px-2.5"
+                                    />
+                                    <div className="relative w-1/2">
+                                      <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
+                                      <input
+                                        type="text"
+                                        placeholder="總額"
+                                        value={entry.amount}
+                                        onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)}
+                                        className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm py-1.5 pl-6 pr-2"
+                                      />
+                                    </div>
+                                  </div>
+                                  <button 
+                                    onClick={() => handleRemoveDynamic(cat.id, entry.id)}
+                                    className="text-red-400 hover:text-red-600 p-1 shrink-0"
+                                    title="刪除"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
                                 </div>
-                              )}
-                            </div>
-                          );
-                        })()}
+                                {cat.isShared && entry.amount && !isNaN(parseFloat(entry.amount)) && (
+                                  <div className="text-xs text-orange-600 font-medium text-right pr-8 flex items-center justify-end gap-1">
+                                    平攤每人: {currency === 'HKD' ? '$' : '¥'} {(parseFloat(entry.amount) / travelers).toFixed(2)}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
+                        {/* 該分類的最終總計 */}
+                        {(() => {
+                          const totalSum = dynamicExpenses[cat.id].reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+                          if (totalSum > 0) {
+                            return (
+                              <div className={`mt-4 pt-3 border-t ${cat.isShared ? 'border-orange-200/60' : 'border-slate-200'} flex flex-col items-end`}>
+                                <div className={`text-sm font-bold ${cat.isShared ? 'text-orange-900' : 'text-slate-700'}`}>
+                                  {cat.label.split(' ')[0]} 總計: {currency === 'HKD' ? '$' : '¥'} {totalSum.toFixed(2)}
+                                </div>
+                                {cat.isShared && (
+                                  <div className="text-xs font-medium text-orange-700 mt-0.5">
+                                    (總平攤每人: {currency === 'HKD' ? '$' : '¥'} {(totalSum / travelers).toFixed(2)})
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
                     ) : (
                       <p className="text-xs text-slate-500 text-center py-2 italic border border-dashed border-slate-300 rounded-md bg-white mt-2">
