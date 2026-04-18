@@ -237,7 +237,7 @@ export default function App() {
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
               <MapPin className="h-6 w-6 text-white shrink-0" />
-              <span>魔幻重慶 高鐵6天團 (旗號：K536)</span>
+              <span>魔幻重慶 高鐵6天花生團 (旗號：K536)</span>
             </h1>
             <p className="mt-1 text-indigo-200 text-xs md:text-sm">
               KL-CXSS06 | 桃花源、武隆天生三橋、洪崖洞
