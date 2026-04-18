@@ -82,7 +82,7 @@ const itineraryData = [
 
 const dynamicCategories = [
   { id: 'optionalTours', label: '自費項目 (每人)', icon: <Camera size={18} />, helper: '請輸入每人費用 (如：老火鍋¥158 / 夜遊¥198)' },
-  { id: 'food', label: '餐飲開支 (全單總數)', icon: <Coffee size={18} />, helper: '請輸入帳單總數，系統會自動按人數平攤', isShared: true },
+  { id: 'food', label: '餐飲開支 (全單總數)', icon: <Coffee size={18} />, helper: '請輸入帳單總數，系統會自動按人數平攤', isShared: true, hasDate: true }, // 新增 hasDate: true
   { id: 'shopping', label: '購物及手信 (每人)', icon: <ShoppingCart size={18} />, helper: '請輸入個人花費' },
   { id: 'transport', label: '當地交通 (每人)', icon: <Car size={18} /> },
   { id: 'others', label: '其他雜費 (每人)', icon: <DollarSign size={18} /> },
@@ -138,9 +138,14 @@ export default function App() {
   };
 
   const handleAddDynamic = (category) => {
+    const catDef = dynamicCategories.find(c => c.id === category);
+    const newItem = { id: Date.now(), desc: '', amount: '' };
+    if (catDef?.hasDate) {
+      newItem.day = '1'; // 預設為第1天
+    }
     setDynamicExpenses(prev => ({
       ...prev,
-      [category]: [...prev[category], { id: Date.now(), desc: '', amount: '' }]
+      [category]: [...prev[category], newItem]
     }));
   };
 
@@ -225,7 +230,6 @@ export default function App() {
   };
 
   return (
-    // 加入了 style={{ colorScheme: 'light' }} 以防止 Android 強制深色模式反轉顏色
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12" style={{ colorScheme: 'light' }}>
       {/* Header */}
       <header className="bg-indigo-700 text-white shadow-lg sticky top-0 z-20">
@@ -303,7 +307,6 @@ export default function App() {
               </div>
               
               <div className="p-5 md:p-6 space-y-6">
-                {/* 1. 日期 */}
                 <div className="flex gap-4">
                   <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0">
                     <Calendar className="w-6 h-6 text-indigo-600" />
@@ -316,7 +319,6 @@ export default function App() {
                 
                 <hr className="border-slate-100" />
 
-                {/* 2. 集合地點 */}
                 <div className="flex gap-4">
                   <div className="bg-emerald-100/50 p-3 rounded-xl h-fit shrink-0">
                     <MapPin className="w-6 h-6 text-emerald-600" />
@@ -330,7 +332,6 @@ export default function App() {
 
                 <hr className="border-slate-100" />
 
-                {/* 3. 導遊資訊 */}
                 <div className="flex gap-4">
                   <div className="bg-amber-100/50 p-3 rounded-xl h-fit shrink-0">
                     <Users className="w-6 h-6 text-amber-600" />
@@ -354,16 +355,13 @@ export default function App() {
 
                 <hr className="border-slate-100" />
 
-                {/* 4. 交通資訊 */}
                 <div className="flex gap-4">
                   <div className="bg-blue-100/50 p-3 rounded-xl h-fit shrink-0">
                     <Train className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="w-full">
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">交通安排 (高鐵)</h3>
-                    
                     <div className="space-y-3">
-                      {/* 去程 */}
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">去程</span>
@@ -382,7 +380,6 @@ export default function App() {
                         </ul>
                       </div>
 
-                      {/* 回程 */}
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程</span>
@@ -438,7 +435,6 @@ export default function App() {
                         </p>
                         
                         <div className="flex flex-col gap-2.5">
-                          {/* 膳食安排 */}
                           <div className="flex items-start gap-2 text-sm text-orange-800 bg-orange-50 p-3 rounded-lg border border-orange-100/50">
                             <Utensils className="w-5 h-5 shrink-0 mt-0.5 text-orange-600" />
                             <div>
@@ -447,7 +443,6 @@ export default function App() {
                             </div>
                           </div>
 
-                          {/* 住宿安排 */}
                           <div className="flex items-start gap-2 text-sm text-indigo-800 bg-indigo-50 p-3 rounded-lg border border-indigo-100/50">
                             <Icon className="w-5 h-5 shrink-0 mt-0.5 text-indigo-600" />
                             <div>
@@ -479,7 +474,6 @@ export default function App() {
                 <select 
                   value={currency} 
                   onChange={(e) => setCurrency(e.target.value)}
-                  // 強制加上 bg-white text-slate-900 防止被手機自動深色化
                   className="text-sm bg-white text-slate-900 border border-slate-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 py-1.5 px-2"
                 >
                   <option value="HKD">HKD ($)</option>
@@ -554,12 +548,35 @@ export default function App() {
                     {dynamicExpenses[cat.id].length > 0 ? (
                       <div className="space-y-3 mt-3">
                         {dynamicExpenses[cat.id].map((entry, index) => (
-                          <div key={entry.id} className="flex flex-col gap-1">
+                          <div key={entry.id} className={`flex flex-col gap-1.5 ${cat.hasDate ? 'border-b border-orange-200/40 pb-3 last:border-0 last:pb-0' : ''}`}>
+                            
+                            {/* 餐飲專屬的日期選擇列 */}
+                            {cat.hasDate && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
+                                <select
+                                  value={entry.day || '1'}
+                                  onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)}
+                                  className="flex-1 bg-white text-slate-900 border border-slate-300 rounded-md shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-xs py-1.5 px-2"
+                                >
+                                  {itineraryData.map(d => {
+                                    // 從標題擷取日期，如 "17/4(五)"
+                                    const dateMatch = d.title.match(/(\d{1,2}\/\d{1,2}\([一二三四五六日]\))/);
+                                    const dateStr = dateMatch ? ` ${dateMatch[0]}` : '';
+                                    return <option key={d.day} value={d.day}>第{d.day}天{dateStr}</option>
+                                  })}
+                                </select>
+                                <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-500 hover:text-red-700 p-1 shrink-0" title="刪除">
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            )}
+
+                            {/* 項目與金額輸入列 */}
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
+                              {!cat.hasDate && <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>}
                               
                               <div className="flex flex-1 gap-2">
-                                {/* 加入了 bg-white text-slate-900 border 來固定字體及背景顏色 */}
                                 <input
                                   type="text"
                                   placeholder="名稱"
@@ -569,7 +586,6 @@ export default function App() {
                                 />
                                 <div className="relative w-1/2">
                                   <span className="absolute inset-y-0 left-0 flex items-center pl-2 text-slate-500 text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
-                                  {/* 加入了 bg-white text-slate-900 border 來固定字體及背景顏色 */}
                                   <input
                                     type="text"
                                     placeholder="總額"
@@ -580,13 +596,11 @@ export default function App() {
                                 </div>
                               </div>
 
-                              <button 
-                                onClick={() => handleRemoveDynamic(cat.id, entry.id)}
-                                className="text-red-500 hover:text-red-700 p-1 shrink-0"
-                                title="刪除"
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                              {!cat.hasDate && (
+                                <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-500 hover:text-red-700 p-1 shrink-0" title="刪除">
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
                             </div>
                             
                             {cat.isShared && entry.amount && !isNaN(parseFloat(entry.amount)) && (
@@ -597,24 +611,72 @@ export default function App() {
                           </div>
                         ))}
 
-                        {/* 加入小計 (Subtotal) 區塊 */}
+                        {/* 小計 (Subtotal) 及每日明細區塊 */}
                         {(() => {
-                          const subtotal = dynamicExpenses[cat.id].reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-                          if (subtotal > 0) {
-                            return (
-                              <div className={`mt-4 pt-3 border-t ${cat.isShared ? 'border-orange-200/60' : 'border-slate-200'} flex flex-col items-end`}>
-                                <div className={`text-sm font-bold ${cat.isShared ? 'text-orange-900' : 'text-slate-700'}`}>
-                                  {cat.label.split(' ')[0]} 小計: {currency === 'HKD' ? '$' : '¥'} {subtotal.toFixed(2)}
-                                </div>
-                                {cat.isShared && (
-                                  <div className="text-xs font-medium text-orange-700 mt-0.5">
-                                    (總平攤每人: {currency === 'HKD' ? '$' : '¥'} {(subtotal / travelers).toFixed(2)})
+                          const validItems = dynamicExpenses[cat.id].filter(item => parseFloat(item.amount) > 0);
+                          if (validItems.length === 0) return null;
+
+                          const totalSum = validItems.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+
+                          let dailyBreakdown = null;
+                          if (cat.hasDate) {
+                            const byDay = {};
+                            validItems.forEach(item => {
+                              const day = item.day || '1';
+                              byDay[day] = (byDay[day] || 0) + parseFloat(item.amount);
+                            });
+
+                            // 將日子按順序排列
+                            const sortedDays = Object.keys(byDay).sort((a,b) => parseInt(a) - parseInt(b));
+
+                            if (sortedDays.length > 0) {
+                              dailyBreakdown = (
+                                <div className="w-full mb-3 space-y-2 bg-orange-100/30 p-3 rounded-lg border border-orange-200/50">
+                                  <div className="text-xs font-bold text-orange-800 flex items-center gap-1">
+                                    <Calendar size={14}/> 每日開支小計
                                   </div>
-                                )}
-                              </div>
-                            );
+                                  {sortedDays.map(dayStr => {
+                                    const dayNum = parseInt(dayStr);
+                                    const dayData = itineraryData.find(d => d.day === dayNum);
+                                    const dateMatch = dayData?.title.match(/(\d{1,2}\/\d{1,2}\([一二三四五六日]\))/);
+                                    const dateLabel = dateMatch ? dateMatch[0] : '';
+                                    const dayTotal = byDay[dayStr];
+                                    const perPerson = (dayTotal / travelers).toFixed(2);
+
+                                    return (
+                                      <div key={dayStr} className="flex justify-between items-center border-b border-orange-200/30 pb-1.5 last:border-0 last:pb-0">
+                                        <span className="text-xs text-slate-600 font-medium">第{dayStr}天 {dateLabel}</span>
+                                        <div className="text-right">
+                                          <div className="text-sm font-bold text-orange-800">
+                                            {currency === 'HKD' ? '$' : '¥'} {dayTotal.toFixed(2)}
+                                          </div>
+                                          {cat.isShared && (
+                                            <div className="text-[10px] text-orange-600">
+                                              平攤每人: {currency === 'HKD' ? '$' : '¥'} {perPerson}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              );
+                            }
                           }
-                          return null;
+
+                          return (
+                            <div className={`mt-4 pt-3 border-t ${cat.isShared ? 'border-orange-200/60' : 'border-slate-200'} flex flex-col items-end`}>
+                              {dailyBreakdown}
+                              <div className={`text-sm font-bold ${cat.isShared ? 'text-orange-900' : 'text-slate-700'}`}>
+                                {cat.label.split(' ')[0]} 總計: {currency === 'HKD' ? '$' : '¥'} {totalSum.toFixed(2)}
+                              </div>
+                              {cat.isShared && (
+                                <div className="text-xs font-medium text-orange-700 mt-0.5">
+                                  (總平攤每人: {currency === 'HKD' ? '$' : '¥'} {(totalSum / travelers).toFixed(2)})
+                                </div>
+                              )}
+                            </div>
+                          );
                         })()}
 
                       </div>
@@ -729,7 +791,6 @@ function FixedExpenseInput({ label, name, value, onChange, icon, currency, helpe
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <span className="text-slate-500 sm:text-sm">{currency === 'HKD' ? '$' : '¥'}</span>
         </div>
-        {/* 加入了 bg-white text-slate-900 border 來固定字體及背景顏色 */}
         <input
           type="text"
           name={name}
