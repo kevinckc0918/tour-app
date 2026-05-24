@@ -33,7 +33,7 @@ import {
 const itineraryData = [
   {
     day: 1,
-    title: '香港 ✈ 伊斯坦堡 (土耳其) 12/10(一)',
+    title: '香港 ✈ 伊斯坦堡 (土耳其) 12/9(六)',
     highlights: ['土耳其航空直航', '夜機出發'],
     details: '是日由東瀛遊領隊陪同下，乘坐土耳其航空公司客機直航飛往伊斯坦堡。',
     icon: Plane,
@@ -42,7 +42,7 @@ const itineraryData = [
   },
   {
     day: 2,
-    title: '伊斯坦堡 → 加歷奇 13/10(二)',
+    title: '伊斯坦堡 → 加歷奇 13/9(日)',
     highlights: ['藍廟', '聖蘇菲亞清真寺', '杜伯奇皇宮', '1915恰納卡萊大橋'],
     details: '抵達後參觀【藍廟】及【聖蘇菲亞清真寺】。隨後前往【杜伯奇皇宮博物館】飽覽伊斯坦堡城市風光。下午乘坐旅遊車跨越現今全球最長的懸索跨海吊橋【1915恰納卡萊大橋】橫跨達達尼海峽前往加歷奇。',
     icon: Landmark,
@@ -51,7 +51,7 @@ const itineraryData = [
   },
   {
     day: 3,
-    title: '加歷奇 → 古薩達斯 14/10(三)',
+    title: '加歷奇 → 古薩達斯 14/9(一)',
     highlights: ['特洛伊古城', '巴格門古城 (觀光吊車)'],
     details: '前往參觀世界文化遺產【特洛伊古城】。隨後乘坐觀光吊車登上【巴格門古城】參觀希臘羅馬時的衛城遺址。其後前往古薩達斯，途中參觀皮革店及特色糖果店。',
     icon: Camera,
@@ -60,16 +60,16 @@ const itineraryData = [
   },
   {
     day: 4,
-    title: '古薩達斯 → 棉花堡 15/10(四)',
-    highlights: ['以弗所古城', '棉花堡溫泉'],
-    details: '參觀羅馬省市首都【以弗所古城】。隨後前往棉花堡。抵達棉花堡參觀獨特的石灰岩梯田及地下棉花堡，入住溫泉酒店享受溫泉樂。',
+    title: '古薩達斯 → 棉花堡 15/9(二)',
+    highlights: ['以弗所古城', '無花果田', '棉花堡溫泉'],
+    details: '參觀羅馬省市首都【以弗所古城】。隨後前往棉花堡（增遊艾登無花果種植田）。抵達棉花堡參觀獨特的石灰岩梯田及地下棉花堡，入住溫泉酒店享受溫泉樂。',
     icon: MapPin,
     meals: '早餐：酒店 | 午餐：地道餐廳 | 晚餐：酒店餐廳',
     hotel: '棉花堡5星溫泉酒店 Colossae / Pam / Richmond 或同級'
   },
   {
     day: 5,
-    title: '棉花堡 → 康雅 16/10(五)',
+    title: '棉花堡 → 康雅 16/9(三)',
     highlights: ['梅夫拉納博物館', '康雅市集'],
     details: '前往康雅，參觀創始人安息的【梅夫拉納博物館】（旋轉舞發源地），並到訪【康雅市集】體驗傳統地道文化。',
     icon: Landmark,
@@ -78,7 +78,7 @@ const itineraryData = [
   },
   {
     day: 6,
-    title: '康雅 → 加柏都斯亞 (奇石林) 17/10(六)',
+    title: '康雅 → 加柏都斯亞 (奇石林) 17/9(四)',
     highlights: ['駱駝商隊驛站', '仙境煙窗', '肚皮舞表演'],
     details: '前往參觀【駱駝商隊驛站】。抵達加柏都斯亞後，參觀【仙境煙窗】、【烏其沙城堡】、【駱駝岩】及【獵人谷】等奇特岩山地貌。晚上安排於洞穴夜總會欣賞肚皮舞表演（包地道小食及飲品一杯）。',
     icon: Camera,
@@ -87,7 +87,7 @@ const itineraryData = [
   },
   {
     day: 7,
-    title: '加柏都斯亞 (奇石林) 18/10(日)',
+    title: '加柏都斯亞 (奇石林) 18/9(五)',
     highlights: ['四驅車之旅(自費)', '地下古城', '居里默石中教堂'],
     details: '可自費參與四驅車之旅深入奇石林區。隨後參觀古時基督徒避難的【地下古城】，以及【居里默】石中教堂群。其後參觀當地著名的地氈工場。',
     icon: Car,
@@ -96,7 +96,7 @@ const itineraryData = [
   },
   {
     day: 8,
-    title: '加柏都斯亞 ✈ 伊斯坦堡 19/10(一)',
+    title: '加柏都斯亞 ✈ 伊斯坦堡 19/9(六)',
     highlights: ['內陸機省時', '地下水道', '皮埃爾洛蒂山丘(自費)'],
     details: '乘搭內陸客機飛往伊斯坦堡，節省長途車程。抵達後參觀東羅馬帝國時期的【地下水道】。團友可自費乘坐吊車登上皮埃爾洛蒂山丘俯瞰金角灣壯麗景色。',
     icon: Plane,
@@ -105,7 +105,7 @@ const itineraryData = [
   },
   {
     day: 9,
-    title: '伊斯坦堡 ✈ 香港 20/10(二)',
+    title: '伊斯坦堡 ✈ 香港 20/9(日)',
     highlights: ['杜瑪伯爵水晶皇宮', '大市集', '博斯普魯斯海峽遊船(自費)'],
     details: '參觀金碧輝煌的【杜瑪伯爵水晶皇宮】。隨後前往擁有五百年歷史的【大市集】自由選購手信。團友可自費參與博斯普魯斯海峽遊船。傍晚前往機場準備乘搭凌晨客機返港。',
     icon: MapPin,
@@ -114,7 +114,7 @@ const itineraryData = [
   },
   {
     day: 10,
-    title: '抵達香港 21/10(三)',
+    title: '抵達香港 21/9(一)',
     highlights: ['平安抵港'],
     details: '航機於是日傍晚安全抵達香港國際機場，結束10天土耳其愉快旅程。',
     icon: Plane,
@@ -135,13 +135,13 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('overview'); 
   const [expandedDay, setExpandedDay] = useState(1);
   
-  // 匯率狀態 (預設值更新)
+  // 匯率狀態
   const [rates, setRates] = useState(() => {
     const saved = localStorage.getItem('trTourRates');
     return saved ? JSON.parse(saved) : {
-      USD: 7.84, // 更新為 7.84
-      TRY: 0.17, // 更新為 0.17
-      RMB: 1.15  // 更新為 1.15
+      USD: 7.84,
+      TRY: 0.17,
+      RMB: 1.15
     };
   });
 
@@ -160,7 +160,8 @@ export default function App() {
     return saved ? JSON.parse(saved) : {
       optionalTours: [
         { id: 'opt-1', desc: '博斯普魯斯海峽船河', amount: '90', currency: 'USD' },
-        { id: 'opt-2', desc: '四驅車之旅(奇石林)', amount: '160', currency: 'USD' }
+        { id: 'opt-2', desc: '四驅車之旅(奇石林)', amount: '160', currency: 'USD' },
+        { id: 'opt-3', desc: '皮埃爾洛蒂山丘', amount: '45', currency: 'USD' }
       ],
       food: [], shopping: [], transport: [], others: []
     };
@@ -171,7 +172,6 @@ export default function App() {
   const [shareTarget, setShareTarget] = useState('all');
   const [toastMsg, setToastMsg] = useState('');
 
-  // LocalStorage 自動儲存
   useEffect(() => {
     localStorage.setItem('trTourRates', JSON.stringify(rates));
     localStorage.setItem('trTourTravelers', travelers.toString());
@@ -217,7 +217,6 @@ export default function App() {
 
   const adjustTravelers = (amount) => setTravelers(prev => Math.max(1, prev + amount));
 
-  // 將任何貨幣轉換為 HKD
   const convertToHKD = (amount, currencyCode) => {
     const num = parseFloat(amount);
     if (isNaN(num)) return 0;
@@ -258,11 +257,11 @@ export default function App() {
       setDynamicExpenses({
         optionalTours: [
           { id: Date.now().toString()+'1', desc: '博斯普魯斯海峽船河', amount: '90', currency: 'USD' },
-          { id: Date.now().toString()+'2', desc: '四驅車之旅(奇石林)', amount: '160', currency: 'USD' }
+          { id: Date.now().toString()+'2', desc: '四驅車之旅(奇石林)', amount: '160', currency: 'USD' },
+          { id: Date.now().toString()+'3', desc: '皮埃爾洛蒂山丘', amount: '45', currency: 'USD' }
         ],
         food: [], shopping: [], transport: [], others: []
       });
-      // 重置時載入最新的預設匯率
       setRates({ USD: 7.84, TRY: 0.17, RMB: 1.15 });
       setTravelers(2);
     }
@@ -366,14 +365,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12" style={{ colorScheme: 'light' }}>
       
-      {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-5 py-3 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.2)] z-[100] animate-in fade-in slide-in-from-top-5 text-sm font-medium whitespace-nowrap flex items-center gap-2">
           {toastMsg}
         </div>
       )}
 
-      {/* Header */}
       <header className="bg-amber-600 text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 md:py-5">
           <div className="flex flex-col">
@@ -387,7 +384,6 @@ export default function App() {
           </div>
         </div>
         
-        {/* Tab Navigation */}
         <div className="flex border-t border-amber-500/50 bg-amber-700/50 overflow-x-auto custom-scrollbar">
           <button onClick={() => setActiveTab('overview')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'overview' ? 'text-white' : 'text-amber-200 hover:text-white hover:bg-amber-600/50'}`}>
             <Info size={18} /><span>總覽</span>
@@ -422,7 +418,6 @@ export default function App() {
               </div>
               <div className="p-5 md:p-6 space-y-6">
                 
-                {/* EGL 獨家優惠 */}
                 <div className="bg-red-50 p-4 rounded-xl border border-red-200">
                   <h3 className="text-red-700 font-bold flex items-center gap-2 mb-2">
                     <DollarSign size={18} /> 服務費全免
@@ -436,8 +431,8 @@ export default function App() {
                   <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0"><Calendar className="w-6 h-6 text-indigo-600" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
-                    <p className="text-slate-800 font-medium text-lg">2026年10月12日 (星期一) 出發</p>
-                    <p className="text-slate-600 text-sm">至 2026年10月21日 (星期三) 返抵</p>
+                    <p className="text-slate-800 font-medium text-lg">2026年9月12日 (星期六) 出發</p>
+                    <p className="text-slate-600 text-sm">至 2026年9月21日 (星期一) 返抵</p>
                   </div>
                 </div>
 
@@ -450,7 +445,7 @@ export default function App() {
                     <div className="space-y-3">
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">去程 (10月12日)</span>
+                          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded">去程 (9月12日)</span>
                         </div>
                         <div className="flex justify-between items-center ml-1">
                           <div className="text-slate-800 font-medium text-sm">香港 <span className="text-slate-400 mx-1">✈</span> 伊斯坦堡</div>
@@ -461,7 +456,7 @@ export default function App() {
 
                       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程 (10月20日)</span>
+                          <span className="bg-slate-600 text-white text-xs font-bold px-2 py-0.5 rounded">回程 (9月20日)</span>
                         </div>
                         <div className="flex justify-between items-center ml-1">
                           <div className="text-slate-800 font-medium text-sm">伊斯坦堡 <span className="text-slate-400 mx-1">✈</span> 香港</div>
@@ -558,7 +553,6 @@ export default function App() {
                   <span className="ml-1 text-[10px] font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">自動儲存</span>
                 </h2>
                 
-                {/* 匯率設定按鈕 */}
                 <button 
                   onClick={() => setIsSettingsModalOpen(true)}
                   className="flex items-center gap-1.5 text-sm bg-slate-100 text-slate-700 hover:bg-amber-100 hover:text-amber-700 border border-slate-200 hover:border-amber-300 px-3 py-1.5 rounded-lg transition-colors font-bold shadow-sm"
