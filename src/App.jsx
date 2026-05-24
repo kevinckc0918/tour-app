@@ -761,7 +761,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Tab 3: Poster */}
+       {/* Tab 3: Poster */}
         {activeTab === 'poster' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 text-center">
@@ -769,23 +769,47 @@ export default function App() {
                 <FileText className="text-amber-600" size={24} />
                 行程海報參考
               </h2>
-              <p className="text-sm text-slate-500 mb-6 bg-slate-50 p-3 rounded-lg inline-block text-left">
-                💡 <b>溫馨提示：</b>請將土耳其 10 天團的單張儲存為 <b><code className="bg-amber-100 text-amber-700 px-1 rounded">poster1.jpg</code></b> 等，並放入專案的 public 資料夾中。
-              </p>
 
-              <div className="space-y-6">
+              <div className="space-y-6 mt-6">
+                {/* 圖片 1 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img src="/poster1.jpg" alt="土耳其10天團海報" className="w-full h-auto block" onError={handleImageError} />
+                  <img src="/poster1.jpg" alt="海報 第1頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第一頁圖片</p>
+                  </div>
+                </div>
+                
+                {/* 圖片 2 */}
+                <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
+                  <img src="/poster2.jpg" alt="海報 第2頁" className="w-full h-auto block" onError={handleImageError} />
+                  <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
+                    <ImageIcon size={64} className="mb-4 opacity-30" />
+                    <p className="font-bold text-slate-500 mb-1">找不到第二頁圖片</p>
+                  </div>
+                </div>
+
+                {/* 圖片 3 */}
+                <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
+                  <img src="/poster3.jpg" alt="海報 第3頁" className="w-full h-auto block" onError={handleImageError} />
+                  <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
+                    <ImageIcon size={64} className="mb-4 opacity-30" />
+                    <p className="font-bold text-slate-500 mb-1">找不到第三頁圖片</p>
+                  </div>
+                </div>
+
+                {/* 圖片 4 */}
+                <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
+                  <img src="/poster4.jpg" alt="海報 第4頁" className="w-full h-auto block" onError={handleImageError} />
+                  <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
+                    <ImageIcon size={64} className="mb-4 opacity-30" />
+                    <p className="font-bold text-slate-500 mb-1">找不到第四頁圖片</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         )}
-
       </main>
 
       {/* Settings Modal (匯率設定面板) */}
