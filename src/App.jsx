@@ -152,7 +152,7 @@ export default function App() {
   
   const [fixedExpenses, setFixedExpenses] = useState(() => {
     const saved = localStorage.getItem('trTourFixedExpenses');
-    return saved ? JSON.parse(saved) : { tourFee: '18399', serviceFee: '0', insurance: '450' };
+    return saved ? JSON.parse(saved) : { tourFee: '18099', serviceFee: '0', insurance: '450' };
   });
 
   const [dynamicExpenses, setDynamicExpenses] = useState(() => {
@@ -253,7 +253,7 @@ export default function App() {
 
   const clearForm = () => {
     if (window.confirm("確定要重置數據並回復到預設值嗎？")) {
-      setFixedExpenses({ tourFee: '18399', serviceFee: '0', insurance: '450' });
+      setFixedExpenses({ tourFee: '18099', serviceFee: '0', insurance: '450' });
       setDynamicExpenses({
         optionalTours: [
           { id: Date.now().toString()+'1', desc: '博斯普魯斯海峽船河', amount: '90', currency: 'USD' },
@@ -363,41 +363,45 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-12" style={{ colorScheme: 'light' }}>
+    // 使用 bg-red-50/30 作為淺柔的底色，不影響閱讀，同時呼應主題
+    <div className="min-h-screen bg-red-50/30 font-sans text-slate-800 pb-12" style={{ colorScheme: 'light' }}>
       
+      {/* Toast Notification */}
       {toastMsg && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-5 py-3 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.2)] z-[100] animate-in fade-in slide-in-from-top-5 text-sm font-medium whitespace-nowrap flex items-center gap-2">
           {toastMsg}
         </div>
       )}
 
-      <header className="bg-amber-600 text-white shadow-lg sticky top-0 z-20">
+      {/* Header - 使用標準土耳其紅 #E30A17 */}
+      <header className="bg-[#E30A17] text-white shadow-lg sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-4 py-4 md:py-5">
           <div className="flex flex-col">
             <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 text-white">
               <Globe className="h-6 w-6 text-white shrink-0" />
               <span>土耳其10天【季節花田約定】</span>
             </h1>
-            <p className="mt-1 text-amber-100 text-xs md:text-sm flex items-center gap-1.5">
+            <p className="mt-1 text-red-100 text-xs md:text-sm flex items-center gap-1.5">
               <span>東瀛遊 EGL Tours (團號: MDUF10)</span>
             </p>            
           </div>
         </div>
         
-        <div className="flex border-t border-amber-500/50 bg-amber-700/50 overflow-x-auto custom-scrollbar">
-          <button onClick={() => setActiveTab('overview')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'overview' ? 'text-white' : 'text-amber-200 hover:text-white hover:bg-amber-600/50'}`}>
+        {/* Tab Navigation - 深紅色半透明 */}
+        <div className="flex border-t border-red-600/50 bg-red-900/40 overflow-x-auto custom-scrollbar">
+          <button onClick={() => setActiveTab('overview')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'overview' ? 'text-white' : 'text-red-200 hover:text-white hover:bg-[#c10813]/50'}`}>
             <Info size={18} /><span>總覽</span>
             {activeTab === 'overview' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
-          <button onClick={() => setActiveTab('itinerary')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'itinerary' ? 'text-white' : 'text-amber-200 hover:text-white hover:bg-amber-600/50'}`}>
+          <button onClick={() => setActiveTab('itinerary')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'itinerary' ? 'text-white' : 'text-red-200 hover:text-white hover:bg-[#c10813]/50'}`}>
             <Calendar size={18} /><span>行程</span>
             {activeTab === 'itinerary' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
-          <button onClick={() => setActiveTab('calculator')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'calculator' ? 'text-white' : 'text-amber-200 hover:text-white hover:bg-amber-600/50'}`}>
+          <button onClick={() => setActiveTab('calculator')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'calculator' ? 'text-white' : 'text-red-200 hover:text-white hover:bg-[#c10813]/50'}`}>
             <Calculator size={18} /><span>旅費</span>
             {activeTab === 'calculator' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
-          <button onClick={() => setActiveTab('poster')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'poster' ? 'text-white' : 'text-amber-200 hover:text-white hover:bg-amber-600/50'}`}>
+          <button onClick={() => setActiveTab('poster')} className={`flex-1 min-w-[80px] flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2.5 md:py-3.5 text-xs md:text-sm font-bold transition-colors relative ${activeTab === 'poster' ? 'text-white' : 'text-red-200 hover:text-white hover:bg-[#c10813]/50'}`}>
             <FileText size={18} /><span>海報</span>
             {activeTab === 'poster' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full"></div>}
           </button>
@@ -410,14 +414,15 @@ export default function App() {
         {activeTab === 'overview' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="bg-amber-50 border-b border-amber-100 p-5 md:p-6">
-                <h2 className="text-lg md:text-xl font-bold flex items-center gap-2 text-amber-900">
-                  <Info className="text-amber-600" size={24} />
+              <div className="bg-red-50 border-b border-red-100 p-5 md:p-6">
+                <h2 className="text-lg md:text-xl font-bold flex items-center gap-2 text-red-900">
+                  <Info className="text-[#E30A17]" size={24} />
                   基本資訊總覽
                 </h2>
               </div>
               <div className="p-5 md:p-6 space-y-6">
                 
+                {/* EGL 獨家優惠 */}
                 <div className="bg-red-50 p-4 rounded-xl border border-red-200">
                   <h3 className="text-red-700 font-bold flex items-center gap-2 mb-2">
                     <DollarSign size={18} /> 服務費全免
@@ -428,7 +433,7 @@ export default function App() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="bg-indigo-100/50 p-3 rounded-xl h-fit shrink-0"><Calendar className="w-6 h-6 text-indigo-600" /></div>
+                  <div className="bg-red-100/50 p-3 rounded-xl h-fit shrink-0"><Calendar className="w-6 h-6 text-[#E30A17]" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">旅行日期</h3>
                     <p className="text-slate-800 font-medium text-lg">2026年9月12日 (星期六) 出發</p>
@@ -471,24 +476,24 @@ export default function App() {
                 <hr className="border-slate-100" />
 
                 <div className="flex gap-4">
-                  <div className="bg-amber-100/50 p-3 rounded-xl h-fit shrink-0"><MapPin className="w-6 h-6 text-amber-600" /></div>
+                  <div className="bg-red-100/50 p-3 rounded-xl h-fit shrink-0"><MapPin className="w-6 h-6 text-[#E30A17]" /></div>
                   <div>
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">行程尊享亮點</h3>
                     <ul className="space-y-2 text-sm text-slate-700">
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-500 mt-0.5">✦</span>
+                        <span className="text-red-500 mt-0.5">✦</span>
                         <span><b>乘搭內陸機</b> (加柏都斯亞飛往伊斯坦堡)，節省十多小時車程。</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-500 mt-0.5">✦</span>
+                        <span className="text-red-500 mt-0.5">✦</span>
                         <span>暢遊多個 <b>世界文化遺產</b> (特洛伊古城、棉花堡、奇石林等)。</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-500 mt-0.5">✦</span>
+                        <span className="text-red-500 mt-0.5">✦</span>
                         <span>棉花堡入住五星級<b>溫泉酒店</b>，享受特色地熱溫泉。</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-amber-500 mt-0.5">✦</span>
+                        <span className="text-red-500 mt-0.5">✦</span>
                         <span>奇石林區安排 <b>洞穴夜總會</b> 欣賞肚皮舞及民族舞表演。</span>
                       </li>
                     </ul>
@@ -511,7 +516,7 @@ export default function App() {
                   <div key={day.day} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-200">
                     <button onClick={() => setExpandedDay(isExpanded ? null : day.day)} className="w-full px-5 py-4 flex items-center justify-between bg-white hover:bg-slate-50 transition-colors text-left">
                       <div className="flex items-center gap-4">
-                        <div className="bg-amber-100 text-amber-700 w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">D{day.day}</div>
+                        <div className="bg-red-100 text-[#E30A17] w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0">D{day.day}</div>
                         <div>
                           <h3 className="font-bold text-lg text-slate-800">{day.title}</h3>
                           <p className="text-sm text-slate-500 mt-1 line-clamp-1">{day.highlights.join(' • ')}</p>
@@ -527,9 +532,9 @@ export default function App() {
                             <Utensils className="w-5 h-5 shrink-0 mt-0.5 text-orange-600" />
                             <div><span className="font-bold block mb-1 text-orange-900">餐飲安排：</span>{day.meals}</div>
                           </div>
-                          <div className="flex items-start gap-2 text-sm text-amber-800 bg-amber-50 p-3 rounded-lg border border-amber-100/50">
-                            <Briefcase className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
-                            <div><span className="font-bold block mb-1 text-amber-900">住宿安排：</span>{day.hotel}</div>
+                          <div className="flex items-start gap-2 text-sm text-red-800 bg-red-50 p-3 rounded-lg border border-red-100/50">
+                            <Briefcase className="w-5 h-5 shrink-0 mt-0.5 text-[#E30A17]" />
+                            <div><span className="font-bold block mb-1 text-red-900">住宿安排：</span>{day.hotel}</div>
                           </div>
                         </div>
                       </div>
@@ -548,28 +553,29 @@ export default function App() {
               
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b pb-4">
                 <h2 className="text-lg font-bold flex items-center gap-2 text-slate-700">
-                  <Calculator className="text-amber-600" size={20} />
+                  <Calculator className="text-[#E30A17]" size={20} />
                   開支明細
                   <span className="ml-1 text-[10px] font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">自動儲存</span>
                 </h2>
                 
+                {/* 匯率設定按鈕 */}
                 <button 
                   onClick={() => setIsSettingsModalOpen(true)}
-                  className="flex items-center gap-1.5 text-sm bg-slate-100 text-slate-700 hover:bg-amber-100 hover:text-amber-700 border border-slate-200 hover:border-amber-300 px-3 py-1.5 rounded-lg transition-colors font-bold shadow-sm"
+                  className="flex items-center gap-1.5 text-sm bg-slate-100 text-slate-700 hover:bg-red-100 hover:text-red-700 border border-slate-200 hover:border-red-300 px-3 py-1.5 rounded-lg transition-colors font-bold shadow-sm"
                 >
                   <Settings size={16} /> 匯率設定
                 </button>
               </div>
 
               {/* Number of Travelers Control */}
-              <div className="flex items-center justify-between bg-amber-50/70 border border-amber-100 rounded-xl p-3 mb-6">
-                <div className="flex items-center gap-2 font-bold text-amber-800">
+              <div className="flex items-center justify-between bg-red-50/70 border border-red-100 rounded-xl p-3 mb-6">
+                <div className="flex items-center gap-2 font-bold text-red-800">
                   <Users size={18} /> 同行人數
                 </div>
-                <div className="flex items-center gap-1 bg-white rounded-lg border border-amber-200 p-1 shadow-sm">
-                  <button onClick={() => adjustTravelers(-1)} className="p-1.5 hover:bg-amber-50 text-amber-600 rounded-md transition-colors disabled:opacity-30 disabled:hover:bg-transparent" disabled={travelers <= 1}><Minus size={16} /></button>
+                <div className="flex items-center gap-1 bg-white rounded-lg border border-red-200 p-1 shadow-sm">
+                  <button onClick={() => adjustTravelers(-1)} className="p-1.5 hover:bg-red-50 text-[#E30A17] rounded-md transition-colors disabled:opacity-30 disabled:hover:bg-transparent" disabled={travelers <= 1}><Minus size={16} /></button>
                   <span className="font-bold text-lg w-8 text-center text-slate-900">{travelers}</span>
-                  <button onClick={() => adjustTravelers(1)} className="p-1.5 hover:bg-amber-50 text-amber-600 rounded-md transition-colors"><Plus size={16} /></button>
+                  <button onClick={() => adjustTravelers(1)} className="p-1.5 hover:bg-red-50 text-[#E30A17] rounded-md transition-colors"><Plus size={16} /></button>
                 </div>
               </div>
 
@@ -602,7 +608,7 @@ export default function App() {
                             <Share2 size={14} /> 分享
                           </button>
                         )}
-                        <button onClick={() => handleAddDynamic(cat.id)} className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-md transition-colors font-bold border ${cat.isShared ? 'bg-orange-100 text-orange-700 hover:bg-orange-200 border-orange-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200 border-amber-200'}`}>
+                        <button onClick={() => handleAddDynamic(cat.id)} className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-md transition-colors font-bold border ${cat.isShared ? 'bg-orange-100 text-orange-700 hover:bg-orange-200 border-orange-200' : 'bg-red-100 text-[#E30A17] hover:bg-red-200 border-red-200'}`}>
                           <Plus size={14} /> 新增
                         </button>
                       </div>
@@ -637,19 +643,19 @@ export default function App() {
                                       <div className="p-2 space-y-3">
                                         {dayItems.map((entry) => (
                                           <div key={entry.id} className="flex items-center gap-1.5">
-                                            <select value={entry.day || '1'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)} className="bg-orange-50 text-orange-800 border border-orange-200 rounded-md focus:ring-amber-500 focus:border-amber-500 text-xs py-1.5 px-0.5 font-medium">
+                                            <select value={entry.day || '1'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'day', e.target.value)} className="bg-orange-50 text-orange-800 border border-orange-200 rounded-md focus:ring-red-500 focus:border-red-500 text-xs py-1.5 px-0.5 font-medium">
                                               {itineraryData.map(d => <option key={d.day} value={d.day}>D{d.day}</option>)}
                                             </select>
-                                            <input type="text" placeholder="名稱" value={entry.desc} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)} className="w-[40%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm py-1.5 px-2" />
+                                            <input type="text" placeholder="名稱" value={entry.desc} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)} className="w-[40%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 text-sm py-1.5 px-2" />
                                             
                                             <div className="flex w-[45%] rounded-md shadow-sm">
-                                              <select value={entry.currency || 'TRY'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'currency', e.target.value)} className="bg-slate-100 text-slate-700 border border-r-0 border-slate-300 rounded-l-md text-xs px-1 py-1.5 font-bold focus:ring-amber-500 focus:border-amber-500 outline-none">
+                                              <select value={entry.currency || 'TRY'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'currency', e.target.value)} className="bg-slate-100 text-slate-700 border border-r-0 border-slate-300 rounded-l-md text-xs px-1 py-1.5 font-bold focus:ring-red-500 focus:border-red-500 outline-none">
                                                 <option value="TRY">₺</option>
                                                 <option value="USD">US$</option>
                                                 <option value="HKD">HK$</option>
                                                 <option value="RMB">¥</option>
                                               </select>
-                                              <input type="text" placeholder="總額" value={entry.amount} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)} className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-r-md focus:border-amber-500 focus:ring-amber-500 text-sm py-1.5 px-2" />
+                                              <input type="text" placeholder="總額" value={entry.amount} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)} className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-r-md focus:border-red-500 focus:ring-red-500 text-sm py-1.5 px-2" />
                                             </div>
                                             
                                             <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-400 hover:text-red-600 p-1 shrink-0" title="刪除"><Trash2 size={16} /></button>
@@ -674,15 +680,15 @@ export default function App() {
                               <div key={entry.id} className="flex flex-col gap-1">
                                 <div className="flex items-center gap-1.5">
                                   <span className="text-xs text-slate-500 font-bold w-3 text-center">{index + 1}.</span>
-                                  <input type="text" placeholder="名稱" value={entry.desc} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)} className="w-[45%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm py-1.5 px-2" />
+                                  <input type="text" placeholder="名稱" value={entry.desc} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'desc', e.target.value)} className="w-[45%] bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500 text-sm py-1.5 px-2" />
                                   <div className="flex w-[45%] rounded-md shadow-sm">
-                                    <select value={entry.currency || 'TRY'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'currency', e.target.value)} className="bg-slate-100 text-slate-700 border border-r-0 border-slate-300 rounded-l-md text-xs px-1 py-1.5 font-bold focus:ring-amber-500 focus:border-amber-500 outline-none">
+                                    <select value={entry.currency || 'TRY'} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'currency', e.target.value)} className="bg-slate-100 text-slate-700 border border-r-0 border-slate-300 rounded-l-md text-xs px-1 py-1.5 font-bold focus:ring-red-500 focus:border-red-500 outline-none">
                                       <option value="TRY">₺</option>
                                       <option value="USD">US$</option>
                                       <option value="HKD">HK$</option>
                                       <option value="RMB">¥</option>
                                     </select>
-                                    <input type="text" placeholder="總額" value={entry.amount} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)} className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-r-md focus:border-amber-500 focus:ring-amber-500 text-sm py-1.5 px-2" />
+                                    <input type="text" placeholder="總額" value={entry.amount} onChange={(e) => handleUpdateDynamic(cat.id, entry.id, 'amount', e.target.value)} className="w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-r-md focus:border-red-500 focus:ring-red-500 text-sm py-1.5 px-2" />
                                   </div>
                                   <button onClick={() => handleRemoveDynamic(cat.id, entry.id)} className="text-red-400 hover:text-red-600 p-1 shrink-0" title="刪除"><Trash2 size={16} /></button>
                                 </div>
@@ -735,14 +741,14 @@ export default function App() {
 
             </div>
             
-            {/* Sticky Total Display at Bottom */}
-            <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_-4px_20px_rgba(0,0,0,0.15)] z-30">
+            {/* Sticky Total Display at Bottom - 採用土耳其紅的漸層色 */}
+            <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#E30A17] to-red-800 text-white shadow-[0_-4px_20px_rgba(0,0,0,0.15)] z-30">
               <div className="max-w-3xl mx-auto px-4 py-3 md:py-4 flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-1/2 -translate-y-1/2 right-4 opacity-10 pointer-events-none">
                   <Calculator size={100} />
                 </div>
                 <div>
-                  <p className="text-orange-100 text-xs md:text-sm font-medium mb-0.5">每人預計總開支 (港幣)</p>
+                  <p className="text-red-100 text-xs md:text-sm font-medium mb-0.5">每人預計總開支 (港幣)</p>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-lg md:text-2xl font-bold">HK$</span>
                     <span className="text-2xl md:text-4xl font-extrabold tracking-tight">
@@ -750,8 +756,8 @@ export default function App() {
                     </span>
                   </div>
                 </div>
-                <div className="text-right border-l border-amber-300/40 pl-4 py-1 z-10">
-                  <p className="text-orange-100 text-[10px] md:text-xs mb-0.5">{travelers} 人同行總費用</p>
+                <div className="text-right border-l border-red-300/40 pl-4 py-1 z-10">
+                  <p className="text-red-100 text-[10px] md:text-xs mb-0.5">{travelers} 人同行總費用</p>
                   <p className="font-bold text-sm md:text-base">
                     HK$ {totals.group}
                   </p>
@@ -761,46 +767,45 @@ export default function App() {
           </div>
         )}
 
-       {/* Tab 3: Poster */}
+        {/* Tab 3: Poster */}
         {activeTab === 'poster' && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 text-center">
               <h2 className="text-lg md:text-xl font-bold flex items-center justify-center gap-2 text-slate-700 mb-2">
-                <FileText className="text-amber-600" size={24} />
+                <FileText className="text-[#E30A17]" size={24} />
                 行程海報參考
               </h2>
+              <p className="text-sm text-slate-500 mb-6 bg-slate-50 p-3 rounded-lg inline-block text-left">
+                💡 <b>溫馨提示：</b>請將土耳其 10 天團的單張儲存為 <b><code className="bg-red-100 text-[#E30A17] px-1 rounded">poster1.jpg</code></b> 等，並放入專案的 public 資料夾中。
+              </p>
 
-              <div className="space-y-6 mt-6">
-                {/* 圖片 1 */}
+              <div className="space-y-6">
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img src="/poster1.jpg" alt="海報 第1頁" className="w-full h-auto block" onError={handleImageError} />
+                  <img src="/poster1.jpg" alt="土耳其10天團海報 第1頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第一頁圖片</p>
                   </div>
                 </div>
                 
-                {/* 圖片 2 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img src="/poster2.jpg" alt="海報 第2頁" className="w-full h-auto block" onError={handleImageError} />
+                  <img src="/poster2.jpg" alt="土耳其10天團海報 第2頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第二頁圖片</p>
                   </div>
                 </div>
 
-                {/* 圖片 3 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img src="/poster3.jpg" alt="海報 第3頁" className="w-full h-auto block" onError={handleImageError} />
+                  <img src="/poster3.jpg" alt="土耳其10天團海報 第3頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第三頁圖片</p>
                   </div>
                 </div>
 
-                {/* 圖片 4 */}
                 <div className="relative w-full rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-slate-200">
-                  <img src="/poster4.jpg" alt="海報 第4頁" className="w-full h-auto block" onError={handleImageError} />
+                  <img src="/poster4.jpg" alt="土耳其10天團海報 第4頁" className="w-full h-auto block" onError={handleImageError} />
                   <div className="hidden flex-col items-center justify-center w-full aspect-[1/1.4] bg-slate-100 text-slate-400 p-6">
                     <ImageIcon size={64} className="mb-4 opacity-30" />
                     <p className="font-bold text-slate-500 mb-1">找不到第四頁圖片</p>
@@ -810,6 +815,7 @@ export default function App() {
             </div>
           </div>
         )}
+
       </main>
 
       {/* Settings Modal (匯率設定面板) */}
@@ -827,8 +833,8 @@ export default function App() {
             </div>
             
             <div className="p-5 flex flex-col gap-4">
-              <div className="bg-amber-50 p-3 rounded-lg border border-amber-100 mb-1">
-                <p className="text-xs text-amber-800 font-medium">
+              <div className="bg-red-50 p-3 rounded-lg border border-red-100 mb-1">
+                <p className="text-xs text-red-800 font-medium">
                   系統會自動根據以下匯率，將您輸入的所有外幣開支統一換算成港幣 (HKD) 進行加總。
                 </p>
               </div>
@@ -838,7 +844,7 @@ export default function App() {
                 <label className="font-bold text-slate-700 w-24 text-sm">1 ₺ (TRY) =</label>
                 <div className="flex-1 relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-bold">HK$</span>
-                  <input type="text" value={rates.TRY} onChange={(e) => handleRateChange('TRY', e.target.value)} className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg pl-11 pr-3 py-2 text-sm focus:ring-amber-500 focus:border-amber-500 shadow-sm" />
+                  <input type="text" value={rates.TRY} onChange={(e) => handleRateChange('TRY', e.target.value)} className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg pl-11 pr-3 py-2 text-sm focus:ring-red-500 focus:border-red-500 shadow-sm" />
                 </div>
               </div>
 
@@ -847,7 +853,7 @@ export default function App() {
                 <label className="font-bold text-slate-700 w-24 text-sm">1 US$ (USD) =</label>
                 <div className="flex-1 relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-bold">HK$</span>
-                  <input type="text" value={rates.USD} onChange={(e) => handleRateChange('USD', e.target.value)} className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg pl-11 pr-3 py-2 text-sm focus:ring-amber-500 focus:border-amber-500 shadow-sm" />
+                  <input type="text" value={rates.USD} onChange={(e) => handleRateChange('USD', e.target.value)} className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg pl-11 pr-3 py-2 text-sm focus:ring-red-500 focus:border-red-500 shadow-sm" />
                 </div>
               </div>
 
@@ -856,13 +862,13 @@ export default function App() {
                 <label className="font-bold text-slate-700 w-24 text-sm">1 ¥ (RMB) =</label>
                 <div className="flex-1 relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-bold">HK$</span>
-                  <input type="text" value={rates.RMB} onChange={(e) => handleRateChange('RMB', e.target.value)} className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg pl-11 pr-3 py-2 text-sm focus:ring-amber-500 focus:border-amber-500 shadow-sm" />
+                  <input type="text" value={rates.RMB} onChange={(e) => handleRateChange('RMB', e.target.value)} className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg pl-11 pr-3 py-2 text-sm focus:ring-red-500 focus:border-red-500 shadow-sm" />
                 </div>
               </div>
               
               <button 
                 onClick={() => setIsSettingsModalOpen(false)}
-                className="mt-3 w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl transition-colors shadow-sm"
+                className="mt-3 w-full bg-[#E30A17] hover:bg-red-700 text-white font-bold py-2.5 rounded-xl transition-colors shadow-sm"
               >
                 確認並儲存
               </button>
@@ -954,7 +960,7 @@ function FixedExpenseInput({ label, name, value, onChange, icon, helperText }) {
           id={name}
           value={value}
           onChange={onChange}
-          className="block w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md pl-11 pr-3 focus:border-amber-500 focus:ring-amber-500 sm:text-sm py-2 transition-colors font-medium"
+          className="block w-full bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-md pl-11 pr-3 focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 transition-colors font-medium"
           placeholder="0.00"
         />
       </div>
